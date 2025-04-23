@@ -1,0 +1,13 @@
+/*
+ * DrvGY_HMC5883L_Cfg.h
+ *
+ *  Created on: Mar 19, 2025
+ *      Author: tmx37
+ */
+
+#ifndef DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_
+#define DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_
+
+
+
+#endif /* DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_ */
