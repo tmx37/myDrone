@@ -18,9 +18,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stdlib.h"
+#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include "DrvGY_BMP180.h"
 
 /* USER CODE END Includes */
 
@@ -97,13 +101,54 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  if(DrvGYBMP180Cfg_Init() != UTLGEN_OK)
+	  HAL_UART_Transmit(&huart2, "AAAAAAAAAAAAAAAAAAA", strlen("AAAAAAAAAAAAAAAAAAA"), 1000);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  uint8_t* line_0 = " ";
+
+  uint8_t* line_1 = "Raw_Pres: ";
+  uint8_t* line_2 = "Pressione: ";
+  uint8_t* line_3 = "[Pa] ";
+
+  uint8_t* line_4 = "| Altitude: ";
+  uint8_t* line_5 = "[m] ";
+
+  uint8_t* line_6 = "| Temperatura: ";
+  uint8_t* line_7 = " -> ";
+  uint8_t* line_8 = "[C]";
+  uint8_t* new_line = "\r\n";
+
+  char output_sting_final_temp[20];
+  char output_sting_final_pres[20];
+  char output_sting_altitude[20];
+
   while (1)
   {
+    itoa(getTemperature(), output_sting_final_temp, 10);
+	  itoa(getPressure(), output_sting_final_pres, 10);
+	  itoa(getAltitude(), output_sting_altitude, 10);
+
+	  HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
+	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
+
+	  HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
+	  HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
+
+	  HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
+	  HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
+
+	  HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
+
+	  HAL_Delay(500);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -315,12 +360,22 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : LED_GREEN_Pin */
   GPIO_InitStruct.Pin = LED_GREEN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(LED_GREEN_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
