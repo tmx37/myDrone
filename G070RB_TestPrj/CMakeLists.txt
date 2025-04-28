@@ -49,6 +49,10 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src/DrvGY_BMP180.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg/DrvGY_BMP180_Cfg.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU6000/Src
+    ${CMAKE_SOURCE_DIR}/Core/Src/DrvI2c.c
 )
 
 # Add include paths
@@ -56,6 +60,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU6000/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU6000/Cfg
 )
 
 # Add project symbols (macros)
@@ -66,6 +72,5 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-
     # Add user defined libraries
 )

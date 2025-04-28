@@ -25,11 +25,21 @@
 /* USER CODE BEGIN Includes */
 
 #include "DrvGY_BMP180.h"
+#include "DrvGY_MPU6000.h"
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+#define MPU6000_SLAVE_0 0x68
+
+#define MPU6000_SELFTEST_X_ADDR 0x0D
+#define MPU6000_SELFTEST_Y_ADDR 0x0E
+#define MPU6000_SELFTEST_Z_ADDR 0x0F
+
+#define MPU6000_SELFTEST_A_ADDR 0x10
+
 
 /* USER CODE END PTD */
 
