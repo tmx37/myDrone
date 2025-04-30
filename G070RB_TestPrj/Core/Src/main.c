@@ -18,8 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stdlib.h"
-#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -32,7 +30,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define MPU6000_SLAVE_0 0x68
+#define MPU6000_SLAVE_0 0x0068
+
+#define MPU6000_CONFIG 0x1A
 
 #define MPU6000_SELFTEST_X_ADDR 0x0D
 #define MPU6000_SELFTEST_Y_ADDR 0x0E
@@ -40,6 +40,19 @@
 
 #define MPU6000_SELFTEST_A_ADDR 0x10
 
+#define MPU6000_ACC_X_OUT_H 0x3B
+#define MPU6000_ACC_X_OUT_L 0x3C
+#define MPU6000_ACC_Y_OUT_H 0x3D
+#define MPU6000_ACC_Y_OUT_L 0x3E
+#define MPU6000_ACC_Z_OUT_H 0x3F
+#define MPU6000_ACC_Z_OUT_L 0x40
+
+#define MPU6000_GYRO_X_OUT_H 0x43
+#define MPU6000_GYRO_X_OUT_L 0x44
+#define MPU6000_GYRO_Y_OUT_H 0x45
+#define MPU6000_GYRO_Y_OUT_L 0x46
+#define MPU6000_GYRO_Z_OUT_H 0x47
+#define MPU6000_GYRO_Z_OUT_L 0x48
 
 /* USER CODE END PTD */
 
@@ -86,6 +99,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  int32_t CH1_DC = 0;
 
   /* USER CODE END 1 */
 
@@ -111,6 +125,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
   if(DrvGYBMP180Cfg_Init() != UTLGEN_OK)
 	  HAL_UART_Transmit(&huart2, "AAAAAAAAAAAAAAAAAAA", strlen("AAAAAAAAAAAAAAAAAAA"), 1000);
 
@@ -137,8 +153,63 @@ int main(void)
   char output_sting_final_pres[20];
   char output_sting_altitude[20];
 
+  uint8_t test_WhoAmI[8] = {0};
+
+  uint8_t gyro_x_raw[2] = {0};
+  uint8_t gyro_y_raw[2] = {0};
+  uint8_t gyro_z_raw[2] = {0};
+
+  uint16_t gyro_x_final_value = 0;
+
+  char gyro_x_value_out [20];
+
+  uint8_t messageDataToTransfer[2];
+
+  messageDataToTransfer[0] = 0x6B;
+	messageDataToTransfer[1] = 0xC0;			//Register restart value
+
+	HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageDataToTransfer[0], 2, 10);
+	HAL_Delay(110);
+
+	messageDataToTransfer[0] = 0x6B;
+	messageDataToTransfer[1] = 0x00;			//Register wake up value
+	HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageDataToTransfer[0], 2, 10);
+
+
+  uint8_t messageConfig[2];
+  messageConfig[0] = MPU6000_CONFIG;
+  messageConfig[1] = 1; // rate di sampling, definito su datasheet
+  
+  HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
+
   while (1)
   {
+    // while (CH1_DC < 65535)
+    // {
+    //   TIM1->CCR1 = CH1_DC;
+    //   CH1_DC += 70;
+    //   HAL_Delay(1);
+    // }
+
+    // while (CH1_DC > 0)
+    // {
+    //   TIM1->CCR1 = CH1_DC;
+    //   CH1_DC -= 70;
+    //   HAL_Delay(1);
+    // }
+    
+    if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
+    {
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_GYRO_X_OUT_H, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_raw[0], 2, 10);
+      gyro_x_final_value = (gyro_x_raw[0] << 8) + gyro_x_raw[1];
+      if (gyro_x_final_value >= 32767) gyro_x_final_value = gyro_x_final_value - 65536;
+      
+      itoa(gyro_x_final_value, gyro_x_value_out, 10);
+
+      HAL_UART_Transmit(&huart2, (uint8_t*)gyro_x_value_out, strlen(gyro_x_value_out), 1000);
+    }
+
     itoa(getTemperature(), output_sting_final_temp, 10);
 	  itoa(getPressure(), output_sting_final_pres, 10);
 	  itoa(getAltitude(), output_sting_altitude, 10);
@@ -186,7 +257,12 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
+  RCC_OscInitStruct.PLL.PLLN = 8;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV3;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -196,11 +272,11 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -222,7 +298,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00503D58;
+  hi2c1.Init.Timing = 0x00E0A6F2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -319,7 +395,7 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
   huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_7B;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
   huart2.Init.Mode = UART_MODE_TX_RX;
