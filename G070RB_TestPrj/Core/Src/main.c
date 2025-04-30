@@ -178,8 +178,13 @@ int main(void)
 
   uint8_t messageConfig[2];
   messageConfig[0] = MPU6000_CONFIG;
-  messageConfig[1] = 1; // rate di sampling, definito su datasheet
+  messageConfig[1] = 4; // rate di sampling, definito su datasheet
   
+  HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
+
+  // Configure the GYRO_CONFIG register for sensitivity (e.g., ±250 degrees/second)
+  messageConfig[0] = 0x1B; // GYRO_CONFIG register
+  messageConfig[1] = 0x00; // Set sensitivity to ±250 degrees/second
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
 
   while (1)
@@ -200,13 +205,21 @@ int main(void)
     
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
     {
-      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_GYRO_X_OUT_H, 1, 50);
+      // Correct the register address transmission for gyroscope X-axis high byte
+      uint8_t gyro_x_out_h = MPU6000_GYRO_X_OUT_H;
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_out_h, 1, 50);
       HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_raw[0], 2, 10);
+
+      // Combine high and low bytes and apply scaling
       gyro_x_final_value = (gyro_x_raw[0] << 8) + gyro_x_raw[1];
       if (gyro_x_final_value >= 32767) gyro_x_final_value = gyro_x_final_value - 65536;
-      
-      itoa(gyro_x_final_value, gyro_x_value_out, 10);
 
+      // Scale the raw value based on sensitivity (±250 degrees/second = 131 LSB/°/s)
+      float gyro_x_scaled = gyro_x_final_value / 131.0;
+
+      // Convert scaled value to string and transmit
+      // snprintf(gyro_x_value_out, sizeof(gyro_x_value_out), "%.2f", gyro_x_scaled);
+      itoa(gyro_x_final_value, gyro_x_value_out, 10);
       HAL_UART_Transmit(&huart2, (uint8_t*)gyro_x_value_out, strlen(gyro_x_value_out), 1000);
     }
 
