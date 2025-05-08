@@ -99,7 +99,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  int32_t CH1_DC = 0;
+   int32_t CH1_DC = 0;
 
   /* USER CODE END 1 */
 
@@ -136,6 +136,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint8_t* line_0 = " ";
+  uint8_t* new_line = "\r\n";
 
   uint8_t* line_1 = "Raw_Pres: ";
   uint8_t* line_2 = "Pressione: ";
@@ -147,7 +148,15 @@ int main(void)
   uint8_t* line_6 = "| Temperatura: ";
   uint8_t* line_7 = " -> ";
   uint8_t* line_8 = "[C]";
-  uint8_t* new_line = "\r\n";
+
+  uint8_t* GY_X = "GY_X: ";
+  uint8_t* GY_Y = "GY_Y: ";
+  uint8_t* GY_Z = "GY_Z: ";
+
+  uint8_t* ACC_X = "ACC_X: ";
+  uint8_t* ACC_Y = "ACC_Y: ";
+  uint8_t* ACC_Z = "ACC_Z: ";
+
 
   char output_sting_final_temp[20];
   char output_sting_final_pres[20];
@@ -159,22 +168,48 @@ int main(void)
   uint8_t gyro_y_raw[2] = {0};
   uint8_t gyro_z_raw[2] = {0};
 
-  uint16_t gyro_x_final_value = 0;
+  uint8_t acc_x_raw[2] = {0};
+  uint8_t acc_y_raw[2] = {0};
+  uint8_t acc_z_raw[2] = {0};
+
+  int16_t gyro_x_final_value = 0;
+  int16_t gyro_y_final_value = 0;
+  int16_t gyro_z_final_value = 0;
+
+  int16_t acc_x_final_value = 0;
+  int16_t acc_y_final_value = 0;
+  int16_t acc_z_final_value = 0;
 
   char gyro_x_value_out [20];
+  char gyro_y_value_out [20];
+  char gyro_z_value_out [20];
+
+  char acc_x_value_out [20];
+  char acc_y_value_out [20];
+  char acc_z_value_out [20];
 
   uint8_t messageDataToTransfer[2];
 
-  messageDataToTransfer[0] = 0x6B;
-	messageDataToTransfer[1] = 0xC0;			//Register restart value
+  uint8_t gyro_x_out_h = MPU6000_GYRO_X_OUT_H;
+  uint8_t gyro_y_out_h = MPU6000_GYRO_Y_OUT_H;
+  uint8_t gyro_z_out_h = MPU6000_GYRO_Z_OUT_H;
+
+  uint8_t acc_x_out_h = MPU6000_ACC_X_OUT_H;
+  uint8_t acc_y_out_h = MPU6000_ACC_Y_OUT_H;
+  uint8_t acc_z_out_h = MPU6000_ACC_Z_OUT_H;
+
+  int gyro_x_scaled, gyro_y_scaled, gyro_z_scaled;
+  int acc_x_scaled, acc_y_scaled, acc_z_scaled;
+
+  messageDataToTransfer[0] = 0x6B;      // Power Management 1 (?) 
+	messageDataToTransfer[1] = 0xC0;			// Register restart value -> reset & sleep
 
 	HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageDataToTransfer[0], 2, 10);
 	HAL_Delay(110);
 
-	messageDataToTransfer[0] = 0x6B;
-	messageDataToTransfer[1] = 0x00;			//Register wake up value
+	messageDataToTransfer[0] = 0x6B;      // Power Management 1 (?) 
+	messageDataToTransfer[1] = 0x00;			// Reset value
 	HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageDataToTransfer[0], 2, 10);
-
 
   uint8_t messageConfig[2];
   messageConfig[0] = MPU6000_CONFIG;
@@ -182,66 +217,144 @@ int main(void)
   
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
 
-  // Configure the GYRO_CONFIG register for sensitivity (e.g., ±250 degrees/second)
+  // GYRO_CONFIG register for sensitivity (±250 degrees/second)
   messageConfig[0] = 0x1B; // GYRO_CONFIG register
   messageConfig[1] = 0x00; // Set sensitivity to ±250 degrees/second
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
 
+  // ACC_CONFIG register for sensitivity (±2g)
+  messageConfig[0] = 0x1C;
+  messageConfig[1] = 0x00; // -> puts AFS_SEL = 0 and sets the sensitivity
+  HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
+
+  /* TO TEST (for future implementation)
+    ok - Lettura last gyro
+    ok - Lettura last acc
+    - WHO_AM_I
+    - USER_CTRL
+    - PWR_MGMT_1
+    - PWM_MGMT_2
+    - SELF_TEST
+    - GYRO_CONFIG
+    - ACCEL_CONFIG
+  */
+
+  uint8_t who_am_i_rx[2];
+  HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &who_am_i_rx[0], 1, 50);
+
   while (1)
   {
-    // while (CH1_DC < 65535)
-    // {
-    //   TIM1->CCR1 = CH1_DC;
-    //   CH1_DC += 70;
-    //   HAL_Delay(1);
-    // }
-
-    // while (CH1_DC > 0)
-    // {
-    //   TIM1->CCR1 = CH1_DC;
-    //   CH1_DC -= 70;
-    //   HAL_Delay(1);
-    // }
-    
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
     {
-      // Correct the register address transmission for gyroscope X-axis high byte
-      uint8_t gyro_x_out_h = MPU6000_GYRO_X_OUT_H;
+      // 250gradi/s, 0,5 "sampling rate", measured = +40, inclinazione attuale = ?
+      // variazione_gradi = +40g/s * 0,5s = +20gradi
+
+      // Gyroscope address transmissions and read
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_out_h, 1, 50);
       HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_raw[0], 2, 10);
+
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_y_out_h, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_y_raw[0], 2, 10);
+
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_z_out_h, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_z_raw[0], 2, 10);
+
+      // 1g = 9,8m/s2, 0,5s "sampling rate", mesured = 2g, m_percorsi = ?
+      // m = 2g * s2 -> 2(9.8m/s2) * (0,5s)2 = 19.6m percorso idealmente (?)
+
+      // Accellerometer address transmissions and read
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_x_out_h, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_x_raw[0], 2, 10);
+
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_y_out_h, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_y_raw[0], 2, 10);
+
+      HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_z_out_h, 1, 50);
+      HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_z_raw[0], 2, 10);
 
       // Combine high and low bytes and apply scaling
       gyro_x_final_value = (gyro_x_raw[0] << 8) + gyro_x_raw[1];
       if (gyro_x_final_value >= 32767) gyro_x_final_value = gyro_x_final_value - 65536;
+      
+      gyro_y_final_value = (gyro_y_raw[0] << 8) + gyro_y_raw[1];
+      if (gyro_y_final_value >= 32767) gyro_y_final_value = gyro_y_final_value - 65536;
+
+      gyro_z_final_value = (gyro_z_raw[0] << 8) + gyro_y_raw[1];
+      if (gyro_z_final_value >= 32767) gyro_z_final_value = gyro_z_final_value - 65536;
 
       // Scale the raw value based on sensitivity (±250 degrees/second = 131 LSB/°/s)
-      float gyro_x_scaled = gyro_x_final_value / 131.0;
+      gyro_x_scaled = gyro_x_final_value / 131;
+      gyro_y_scaled = gyro_y_final_value / 131;
+      gyro_z_scaled = gyro_z_final_value / 131;
+
+      // Combine high and low bytes and apply scaling
+      acc_x_final_value = (acc_x_raw[0] << 8) + acc_x_raw[1];
+      if (acc_x_final_value >= 32767) acc_x_final_value = acc_x_final_value - 65536;
+            
+      acc_y_final_value = (acc_y_raw[0] << 8) + acc_y_raw[1];
+      if (acc_y_final_value >= 32767) acc_y_final_value = acc_y_final_value - 65536;
+      
+      acc_z_final_value = (acc_z_raw[0] << 8) + acc_y_raw[1];
+      if (acc_z_final_value >= 32767) acc_z_final_value = acc_z_final_value - 65536;
+      
+      // Scale the raw value based on sensitivity (±2g = 16384 LSB/g)
+      acc_x_scaled = acc_x_final_value / 16384;
+      acc_y_scaled = acc_y_final_value / 16384;
+      acc_z_scaled = acc_z_final_value / 16384;
 
       // Convert scaled value to string and transmit
-      // snprintf(gyro_x_value_out, sizeof(gyro_x_value_out), "%.2f", gyro_x_scaled);
-      itoa(gyro_x_final_value, gyro_x_value_out, 10);
+      itoa(gyro_x_scaled, gyro_x_value_out, 10);
+  	  HAL_UART_Transmit(&huart2, GY_X, strlen(GY_X), 1000);
       HAL_UART_Transmit(&huart2, (uint8_t*)gyro_x_value_out, strlen(gyro_x_value_out), 1000);
+  	  HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+
+      itoa(gyro_y_scaled, gyro_y_value_out, 10);
+  	  HAL_UART_Transmit(&huart2, GY_Y, strlen(GY_Y), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)gyro_y_value_out, strlen(gyro_y_value_out), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+  
+      itoa(gyro_z_scaled, gyro_z_value_out, 10);
+  	  HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)gyro_z_value_out, strlen(gyro_z_value_out), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+
+      // Convert scaled value to string and transmit
+      itoa(acc_x_scaled, acc_x_value_out, 10);
+      HAL_UART_Transmit(&huart2, ACC_X, strlen(ACC_X), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)acc_x_value_out, strlen(acc_x_value_out), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+
+      itoa(acc_y_scaled, acc_y_value_out, 10);
+      HAL_UART_Transmit(&huart2, ACC_Y, strlen(ACC_Y), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)acc_y_value_out, strlen(acc_y_value_out), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+  
+      itoa(acc_z_scaled, acc_z_value_out, 10);
+      HAL_UART_Transmit(&huart2, ACC_Z, strlen(ACC_Z), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)acc_z_value_out, strlen(acc_z_value_out), 1000);
+      HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
+
     }
 
-    itoa(getTemperature(), output_sting_final_temp, 10);
-	  itoa(getPressure(), output_sting_final_pres, 10);
-	  itoa(getAltitude(), output_sting_altitude, 10);
+    // itoa(getTemperature(), output_sting_final_temp, 10);
+	  // itoa(getPressure(), output_sting_final_pres, 10);
+	  // itoa(getAltitude(), output_sting_altitude, 10);
 
-	  HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
-	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
+	  // HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
+	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
+	  // HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
 
-	  HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
-	  HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
+	  // HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
+	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
+	  // HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
 
-	  HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
-	  HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
+	  // HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
+	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
+	  // HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
 
-	  HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
+	  // HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
 
-	  HAL_Delay(500);
+	  HAL_Delay(100);
 
     /* USER CODE END WHILE */
 
