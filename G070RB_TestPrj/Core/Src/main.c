@@ -42,6 +42,14 @@
 
 #define MPU6000_WHO_AM_I 0x75
 #define MPU6000_SAMPLE_RATE_DIV 0x19
+#define MPU6000_SIGNAL_PATH_RESET 0x68
+
+#define GYRO_RESET_SIGNAL 4
+#define ACCEL_RESET_SIGNAL 2
+#define TEMP_RESET_SIGNAL 1
+
+#define MPU6000_PWE_MGMT_1 0x6B
+#define MPU6000_PWE_MGMT_2 0x6C
 
 #define MPU6000_ACC_X_OUT_H 0x3B
 #define MPU6000_ACC_X_OUT_L 0x3C
@@ -234,14 +242,13 @@ int main(void)
     ok - Lettura last gyro
     ok - Lettura last acc
     ok - WHO_AM_I
-    - USER_CTRL
     - PWR_MGMT_1
     - PWM_MGMT_2
     - SELF_TEST
     - GYRO_CONFIG
     - ACCEL_CONFIG
     - SMPRT_DIV -> SAMPLE RATE DIVIDER imposta il rate di sampling dei registri valore dei sensori, della coda fifo e di DMP
-    - SIGNAL_PATH_RESET -> resetta uscite analogiche e digitali dei sensori
+    ok - SIGNAL_PATH_RESET -> resetta uscite analogiche e digitali dei sensori
   */
 
   /* TO IMPLEMENT (MPU6000 Driver)
@@ -264,18 +271,40 @@ int main(void)
   {
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
     {
-
+    
+      #if 0
       // WHO_AM_I
       uint8_t who_am_i_rx[1];
       HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_WHO_AM_I, 1, who_am_i_rx, 1, HAL_MAX_DELAY);
 
-      // USER_CTRL
-      
-      
-
       // SIGNAL_PATH_RESET
+      // gyro reset
+      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_SIGNAL_PATH_RESET, 1, GYRO_RESET_SIGNAL, 1, HAL_MAX_DELAY) == HAL_OK) { HAL_UART_Transmit(&huart2, "Gyro reset!", strlen("Gyro reset!"), 1000); } else { HAL_UART_Transmit(&huart2, "Can't reset Gyro!", strlen("Can't reset Gyro!"), 1000); } 
+      // accl reset
+      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_SIGNAL_PATH_RESET, 1, ACCEL_RESET_SIGNAL, 1, HAL_MAX_DELAY) == HAL_OK) { HAL_UART_Transmit(&huart2, "Accel reset!", strlen("Accel reset!"), 1000); } else { HAL_UART_Transmit(&huart2, "Can't reset Accel!", strlen("Can't reset Accel!"), 1000); }
+      // temp reset
+      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_SIGNAL_PATH_RESET, 1, TEMP_RESET_SIGNAL, 1, HAL_MAX_DELAY) == HAL_OK) { HAL_UART_Transmit(&huart2, "Temp reset!", strlen("Temp reset!"), 1000); } else { HAL_UART_Transmit(&huart2, "Can't reset Temp!", strlen("Can't reset Temp!"), 1000); }
+      HAL_UART_Transmit(&huart2, "\n\r", strlen("\n\r"), 1000);
       
+      #endif
+
       // PWR_MGMT_1
+      uint8_t CLKSEL_Self8MHz = 0;
+      uint8_t CLKSEL_PLLXGyroRef = 1;
+      uint8_t CLKSEL_PLLYGyroRef = 2;
+      uint8_t CLKSEL_PLLZGyroRef = 3;
+      uint8_t CLKSEL_PLLEXT_36768Hz_Ref = 4;
+      uint8_t CLKSEL_PLLEXT_19200KHz_Ref = 5;
+      uint8_t StopClock = 7;
+
+      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, CLKSEL_Self8MHz, 1, HAL_MAX_DELAY) == HAL_OK) 
+      { 
+        HAL_UART_Transmit(&huart2, "Internal clock reference set", strlen("Internal clock reference set"), HAL_MAX_DELAY);
+      } 
+      else
+      {
+        HAL_UART_Transmit(&huart2, "Cant set internal clock reference set", strlen("Cant set internal clock reference set"), HAL_MAX_DELAY);
+      }
       
       // PWM_MGMT_2
       
