@@ -40,6 +40,9 @@
 
 #define MPU6000_SELFTEST_A_ADDR 0x10
 
+#define MPU6000_WHO_AM_I 0x75
+#define MPU6000_SAMPLE_RATE_DIV 0x19
+
 #define MPU6000_ACC_X_OUT_H 0x3B
 #define MPU6000_ACC_X_OUT_L 0x3C
 #define MPU6000_ACC_Y_OUT_H 0x3D
@@ -230,26 +233,63 @@ int main(void)
   /* TO TEST (for future implementation)
     ok - Lettura last gyro
     ok - Lettura last acc
-    - WHO_AM_I
+    ok - WHO_AM_I
     - USER_CTRL
     - PWR_MGMT_1
     - PWM_MGMT_2
     - SELF_TEST
     - GYRO_CONFIG
     - ACCEL_CONFIG
+    - SMPRT_DIV -> SAMPLE RATE DIVIDER imposta il rate di sampling dei registri valore dei sensori, della coda fifo e di DMP
+    - SIGNAL_PATH_RESET -> resetta uscite analogiche e digitali dei sensori
   */
 
-  uint8_t who_am_i_rx[2];
-  HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &who_am_i_rx[0], 1, 50);
+  /* TO IMPLEMENT (MPU6000 Driver)
+    - UtlGen_Err getDMPData(&DMPData output);
+    - UtlGen_Err getGyro(&GYData output); 
+    - UtlGen_Err getGyro(&ACCData output); 
+    - UtlGen_Err getAngles(&XYZAngles output); 
+    
+    - UtlGen_Err setSamplingTime(uint8_t mseconds);
+    - 
+    
+    - UtlGen_Err MPU6000_init();
+      > "register" default angle (signal to call this only when its certain you start on a plain surface)
+      > 
+  */
+
+  //HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &who_am_i_rx[0], 1, 50);
 
   while (1)
   {
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
     {
+
+      // WHO_AM_I
+      uint8_t who_am_i_rx[1];
+      HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_WHO_AM_I, 1, who_am_i_rx, 1, HAL_MAX_DELAY);
+
+      // USER_CTRL
+      
+      
+
+      // SIGNAL_PATH_RESET
+      
+      // PWR_MGMT_1
+      
+      // PWM_MGMT_2
+      
+      // SELF_TEST
+      
+      // GYRO_CONFIG
+
+      // ACCEL_CONFIG
+      
+      // SMPRT_DIV -> SAMPLE RATE DIVIDER imposta il rate di sampling dei registri valore dei sensori, della coda fifo e di DMP
+
+      // GYROSCOPE_READ
       // 250gradi/s, 0,5 "sampling rate", measured = +40, inclinazione attuale = ?
       // variazione_gradi = +40g/s * 0,5s = +20gradi
-
-      // Gyroscope address transmissions and read
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_out_h, 1, 50);
       HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_raw[0], 2, 10);
 
@@ -259,10 +299,9 @@ int main(void)
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_z_out_h, 1, 50);
       HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_z_raw[0], 2, 10);
 
+      // ACCELLEROMETER READ
       // 1g = 9,8m/s2, 0,5s "sampling rate", mesured = 2g, m_percorsi = ?
       // m = 2g * s2 -> 2(9.8m/s2) * (0,5s)2 = 19.6m percorso idealmente (?)
-
-      // Accellerometer address transmissions and read
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_x_out_h, 1, 50);
       HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_x_raw[0], 2, 10);
 
@@ -302,6 +341,7 @@ int main(void)
       acc_y_scaled = acc_y_final_value / 16384;
       acc_z_scaled = acc_z_final_value / 16384;
 
+      // PRINT
       // Convert scaled value to string and transmit
       itoa(gyro_x_scaled, gyro_x_value_out, 10);
   	  HAL_UART_Transmit(&huart2, GY_X, strlen(GY_X), 1000);
