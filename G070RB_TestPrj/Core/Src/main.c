@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "DrvGY_BMP180.h"
-#include "DrvGY_MPU6000.h"
+#include "DrvGY_MPU60X0.h"
 
 /* USER CODE END Includes */
 
@@ -243,19 +243,6 @@ int main(void)
   messageConfig[0] = 0x1C;
   messageConfig[1] = 0x00; // -> puts AFS_SEL = 0 and sets the sensitivity
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
-
-  /* TO TEST (for future implementation)
-    ok - Lettura last gyro
-    ok - Lettura last acc
-    ok - WHO_AM_I
-    ok - PWR_MGMT_1
-    ok - PWM_MGMT_2
-    ok - GYRO_CONFIG
-    ok - ACCEL_CONFIG
-    // - SELF_TEST
-    ok - SMPRT_DIV -> SAMPLE RATE DIVIDER imposta il rate di sampling dei registri valore dei sensori, della coda fifo e di DMP
-    ok - SIGNAL_PATH_RESET -> resetta uscite analogiche e digitali dei sensori
-  */
 
   /* TO IMPLEMENT (in MPU60x0 Driver)
     - understand why I have to work with a shifted slaved device address
