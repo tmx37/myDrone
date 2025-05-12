@@ -50,40 +50,45 @@
  static DrvGY_MPU60X0_IsDeviceReadyCB_t mIsDeviceReady;
  static DrvGY_MPU60X0_MasterTransmitCB_t mMasterTrasmitCB;
  static DrvGY_MPU60X0_MasterReceiveCB_t mMasterReceiveCB;
+ static DrvGY_MPU60X0_DelayCB_t mDelayCB;
+
+ static XYZAngles CurrentAngle = { 0, 0, 0};
 
 /******************************************************************************
  * Function Definitions Private
  ******************************************************************************/
 
-/* 
-    TODO: Init
-      > "register" default angle (signal to call this only when its certain you start on a plain surface)
-*/
 UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData)
 {
 
+    uint8_t Pwr_Mgmt_ResetNSleep[] = { 0x6B, 0xC0 };
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, Pwr_Mgmt_ResetNSleep, 2);
+    mDelayCB(110);
+    
+
+    return UTLGEN_OK;
 }
 
 // TODO: UtlGen_Err setSamplingTime(uint8_t mseconds);
 UtlGen_Err_t setSamplingTime(uint8_t mseconds)
 {
-
+    return UTLGEN_OK;
 }
 
 // TODO: UtlGen_Err getGyro(&GYData output); 
 UtlGen_Err_t getGyro()
 {
-
+    return UTLGEN_OK;
 }
 
 // TODO: UtlGen_Err getAngles(&XYZAngles output); 
 UtlGen_Err_t getAngles()
 {
-
+    return UTLGEN_OK;
 }
 
 // TODO: UtlGen_Err getAcc(&ACCData output); 
 UtlGen_Err_t getAccel()
 {
-
+    return UTLGEN_OK;
 } 

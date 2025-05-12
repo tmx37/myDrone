@@ -32,3 +32,8 @@ uint32_t DrvI2c_MasterReceive(uint32_t I2cInst, uint16_t DevAddr, uint8_t *pData
 {
 	return HAL_I2C_Master_Receive(&hi2c1, DevAddr, pData, DataSize, HAL_MAX_DELAY);
 }
+
+void DrvI2c_Delay(uint32_t Delay)
+{
+	return HAL_Delay(Delay);
+}

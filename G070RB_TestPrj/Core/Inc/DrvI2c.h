@@ -19,6 +19,8 @@ uint32_t DrvI2c_MasterTransmit(uint32_t I2cInst, uint16_t DevAddress, uint8_t *p
 // Receives data from the target device in blocking mode
 uint32_t DrvI2c_MasterReceive(uint32_t I2cInst, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
 
+void DrvI2c_Delay(uint32_t Delay);
+
 
 #ifdef __cplusplus
 }

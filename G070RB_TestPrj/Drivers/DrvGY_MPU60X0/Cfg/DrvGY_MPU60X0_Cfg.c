@@ -48,6 +48,7 @@
     mConfigData.pfIsDeviceReadyI2cCB = DrvI2c_IsDeviceReady;
     mConfigData.pfMasterTransmitCB = DrvI2c_MasterTransmit;
     mConfigData.pfMasterReceiveCB = DrvI2c_MasterReceive;
+    mConfigData.pfDelayCB = DrvI2c_Delay;
 
     // TODO: Configure other general settings
 

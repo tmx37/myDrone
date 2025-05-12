@@ -10,6 +10,9 @@
 
 #include "DrvGY_BMP180_Cfg.h"
 
+// TODO: find another solution to this
+static const uint8_t MPU60X0_ADDR = 0x0068;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +22,7 @@ typedef uint32_t (*DrvGY_MPU60X0_ReadRegisterCB_t)(uint32_t I2cInst, uint8_t Dev
 typedef uint32_t (*DrvGY_MPU60X0_IsDeviceReadyCB_t)(uint32_t I2cInst, uint8_t DevAddr, uint8_t nTrials);
 typedef uint32_t (*DrvGY_MPU60X0_MasterTransmitCB_t)(uint32_t I2cInst, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
 typedef uint32_t (*DrvGY_MPU60X0_MasterReceiveCB_t)(uint32_t I2cInst, uint16_t DevAddress, uint8_t *pData, uint16_t Size);
+typedef void (*DrvGY_MPU60X0_DelayCB_t)(uint32_t Delay);
 
 typedef struct 
 {
@@ -28,10 +32,31 @@ typedef struct
 	DrvGY_MPU60X0_IsDeviceReadyCB_t pfIsDeviceReadyI2cCB;
     DrvGY_MPU60X0_MasterTransmitCB_t pfMasterTransmitCB;
     DrvGY_MPU60X0_MasterReceiveCB_t pfMasterReceiveCB;
+    DrvGY_MPU60X0_DelayCB_t pfDelayCB;
+
 
 } DrvMPU60X0_Config_t;
 
+typedef struct 
+{
+    int16_t XG, YG, ZG;
+} GYData;
 
+typedef struct 
+{
+    int16_t XA, YA, ZA;
+} ACCData;
+
+typedef struct 
+{
+    int16_t XR, YR, ZR;
+} XYZAngles;
+
+/*
+ > INITIALIZE ONLY ONCE SURE YOU ARE IN A PLAIN SURFACE (analyze IIS2ICLX 2-Axis Digital Inclinometer) 
+ > Try an accellerometer based approach: if only Z ha accellerometer value = 1, its fine. Find out if it is possible to have a greater resolution.
+ > Use FreeRTOS because this library introduces Delays and use that will slow down a "linear" execution system
+ */
 UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData);
 
 // TODO: UtlGen_Err setSamplingTime(uint8_t mseconds);
