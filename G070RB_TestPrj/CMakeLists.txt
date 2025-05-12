@@ -60,6 +60,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    ${CMAKE_SOURCE_DIR}/Core/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Inc

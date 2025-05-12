@@ -244,24 +244,6 @@ int main(void)
   messageConfig[1] = 0x00; // -> puts AFS_SEL = 0 and sets the sensitivity
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
 
-  /* TO IMPLEMENT (in MPU60x0 Driver)
-    - understand why I have to work with a shifted slaved device address
-
-    - UtlGen_Err getDMPData(&DMPData output);
-    - UtlGen_Err getGyro(&GYData output); 
-    - UtlGen_Err getGyro(&ACCData output); 
-    - UtlGen_Err getAngles(&XYZAngles output); 
-    
-    - UtlGen_Err setSamplingTime(uint8_t mseconds);
-    - 
-    
-    - UtlGen_Err MPU6000_init();
-      > "register" default angle (signal to call this only when its certain you start on a plain surface)
-      > 
-  */
-
-  //HAL_I2C_Master_Receive(&hi2c1, MPU6000_SLAVE_0 << 1, &who_am_i_rx[0], 1, 50);
-
   while (1)
   {
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))

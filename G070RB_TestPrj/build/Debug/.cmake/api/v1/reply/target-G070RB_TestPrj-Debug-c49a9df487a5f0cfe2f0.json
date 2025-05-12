@@ -33,7 +33,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 75,
+				"line" : 76,
 				"parent" : 0
 			},
 			{
@@ -76,6 +76,10 @@
 			],
 			"includes" : 
 			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Core/Inc"
+				},
 				{
 					"backtrace" : 3,
 					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/DrvGY_BMP180/Inc"
@@ -178,6 +182,10 @@
 			],
 			"includes" : 
 			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Core/Inc"
+				},
 				{
 					"backtrace" : 3,
 					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/DrvGY_BMP180/Inc"
