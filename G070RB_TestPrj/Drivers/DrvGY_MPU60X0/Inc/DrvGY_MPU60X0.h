@@ -40,17 +40,17 @@ typedef struct
 typedef struct 
 {
     int16_t XG, YG, ZG;
-} GYData;
+} GY_Data;
 
 typedef struct 
 {
     int16_t XA, YA, ZA;
-} ACCData;
+} ACC_Data;
 
 typedef struct 
 {
     int16_t XR, YR, ZR;
-} XYZAngles;
+} XYZ_Angles;
 
 /*
  > INITIALIZE ONLY ONCE SURE YOU ARE IN A PLAIN SURFACE (analyze IIS2ICLX 2-Axis Digital Inclinometer) 
@@ -59,17 +59,13 @@ typedef struct
  */
 UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData);
 
-// TODO: UtlGen_Err setSamplingTime(uint8_t mseconds);
 UtlGen_Err_t setSamplingTime(uint8_t mseconds);
 
-// TODO: UtlGen_Err getGyro(&GYData output); 
-UtlGen_Err_t getGyro();
+UtlGen_Err_t getGyro(GY_Data *output);
 
-// TODO: UtlGen_Err getAngles(&XYZAngles output); 
-UtlGen_Err_t getAngles();
+UtlGen_Err_t getAngles(XYZ_Angles *output);
 
-// TODO: UtlGen_Err getAcc(&ACCData output); 
-UtlGen_Err_t getAccel();
+UtlGen_Err_t getAccel(ACC_Data *output);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -230,7 +230,7 @@ int main(void)
 
   uint8_t messageConfig[2];
   messageConfig[0] = MPU6000_CONFIG;
-  messageConfig[1] = 4; // rate di sampling, definito su datasheet
+  messageConfig[1] = 4; // definito su datasheet
   
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
 
@@ -249,7 +249,7 @@ int main(void)
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
     {
     
-      #if 0
+      #if 1
       // ############################################################## WHO_AM_I ##############################################################
       uint8_t who_am_i_rx[1];
       HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_WHO_AM_I, 1, who_am_i_rx, 1, HAL_MAX_DELAY);

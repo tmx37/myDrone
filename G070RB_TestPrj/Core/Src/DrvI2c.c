@@ -21,13 +21,13 @@ uint32_t DrvI2c_IsDeviceReady(uint32_t I2cInst, uint8_t DevAddr, uint8_t nTrials
 	return HAL_I2C_IsDeviceReady(&hi2c1, DevAddr, nTrials, HAL_MAX_DELAY);
 }
 
-// Transmits data to target device in blocking mode
+// Transmits data to target device in blocking mode (consecutive bytes of data)
 uint32_t DrvI2c_MasterTransmit(uint32_t I2cInst, uint16_t DevAddr, uint8_t *pData, uint16_t DataSize)
 {
 	return HAL_I2C_Master_Transmit(&hi2c1, DevAddr, pData, DataSize, HAL_MAX_DELAY);
 }
 
-// Receives data from the target device in blocking mode
+// Receives data from the target device in blocking mode (consecutive bytes of data)
 uint32_t DrvI2c_MasterReceive(uint32_t I2cInst, uint16_t DevAddr, uint8_t *pData, uint16_t DataSize)
 {
 	return HAL_I2C_Master_Receive(&hi2c1, DevAddr, pData, DataSize, HAL_MAX_DELAY);
