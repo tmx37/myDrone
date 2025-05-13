@@ -254,7 +254,7 @@ int main(void)
       uint8_t who_am_i_rx[1];
       HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_WHO_AM_I, 1, who_am_i_rx, 1, HAL_MAX_DELAY);
 
-      // ############################################################## SIGNAL_PATH_RESET ##############################################################
+      // ok ############################################################## SIGNAL_PATH_RESET ##############################################################
       // gyro reset
       if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_SIGNAL_PATH_RESET, 1, GYRO_RESET_SIGNAL, 1, HAL_MAX_DELAY) == HAL_OK) { HAL_UART_Transmit(&huart2, "Gyro reset!", strlen("Gyro reset!"), 1000); } else { HAL_UART_Transmit(&huart2, "Can't reset Gyro!", strlen("Can't reset Gyro!"), 1000); } 
       // accl reset
@@ -263,7 +263,7 @@ int main(void)
       if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_SIGNAL_PATH_RESET, 1, TEMP_RESET_SIGNAL, 1, HAL_MAX_DELAY) == HAL_OK) { HAL_UART_Transmit(&huart2, "Temp reset!", strlen("Temp reset!"), 1000); } else { HAL_UART_Transmit(&huart2, "Can't reset Temp!", strlen("Can't reset Temp!"), 1000); }
       HAL_UART_Transmit(&huart2, "\n\r", strlen("\n\r"), 1000);
       
-      // ############################################################## PWR_MGMT_1 ##############################################################
+      // ok, evaluate api to operate on-the-go ############################################################## PWR_MGMT_1 ##############################################################
 
       // "CLKSEL": Clock Source select -> REMEMBER: " [...]t is highly recommended that the device be configured to use one of the gyroscopes (or an external clock source) as the clock reference for improved stability [...] " (from documentation)
       uint8_t CLKSEL_Self8MHz = 0;
@@ -287,13 +287,13 @@ int main(void)
       uint8_t DeviceReset = 128;
 
       // to read (try better)
-      uint8_t old_pwr_mgmt = 0;
+      uint8_t old_pwr_mgmt_1 = 0;
 
       // to write
-      uint8_t pwr_mgmt_reset = 0;
+      uint8_t pwr_mgmt_reset_1 = 0;
       uint8_t pwr_mngmt_1_setting = CLKSEL_Self8MHz + DisableTemperatureSentor;
 
-      HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &old_pwr_mgmt, 1, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &old_pwr_mgmt_1, 1, HAL_MAX_DELAY);
 
       if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &pwr_mngmt_1_setting, 1, HAL_MAX_DELAY) == HAL_OK) 
       { 
@@ -311,16 +311,16 @@ int main(void)
       // "STBY_ZG": puts the Z axis gyroscope into standby mode 
       uint8_t STBY_ZG = 0;
       // "STBY_YG": puts the Y axis gyroscope into standby mode 
-      uint8_t STBY_ZG = 0;
+      uint8_t STBY_YG = 0;
       // "STBY_XG": puts the X axis gyroscope into standby mode
-      uint8_t STBY_ZG = 0;
+      uint8_t STBY_XG = 0;
       
       // "STBY_ZA": puts the Z axis accelerometer into standby mode
-      uint8_t STBY_ZG = 0;
+      uint8_t STBY_ZA = 0;
       // "STBY_YA": puts the Y axis accelerometer into standby mode
-      uint8_t STBY_ZG = 0;
+      uint8_t STBY_YA = 0;
       // "STBY_XA": puts the X axis accelerometer into standby mode
-      uint8_t STBY_ZG = 0;
+      uint8_t STBY_XA = 0;
       
       // "LP_WAKE_CTRL": Wake-ups frequency (Used by "CYCLE" setting of PWR_MGMT_1, register 107)
       uint8_t LP_WAKE_CTRL_1n25Hz = 0;
@@ -329,15 +329,15 @@ int main(void)
       uint8_t LP_WAKE_CTRL_40Hz = 192;
 
       // to read (try better)
-      uint8_t old_pwr_mgmt = 0;
+      uint8_t old_pwr_mgmt_2 = 0;
 
       // to write
-      uint8_t pwr_mgmt_reset = 0;
-      uint8_t pwr_mngmt_1_setting = 0;
+      uint8_t pwr_mgmt_reset_2 = 0;
+      uint8_t pwr_mngmt_2_setting = 0;
 
-      HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &old_pwr_mgmt, 1, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &old_pwr_mgmt_2, 1, HAL_MAX_DELAY);
 
-      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &pwr_mngmt_1_setting, 1, HAL_MAX_DELAY) == HAL_OK) 
+      if (HAL_I2C_Mem_Write(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_PWE_MGMT_1, 1, &pwr_mngmt_2_setting, 1, HAL_MAX_DELAY) == HAL_OK) 
       { 
         HAL_UART_Transmit(&huart2, "Internal clock reference set", strlen("Internal clock reference set"), HAL_MAX_DELAY);
       } 
@@ -361,7 +361,7 @@ int main(void)
         HAL_UART_Transmit(&huart2, "Sample rate not configured!", strlen("Sample rate not configured!"), HAL_MAX_DELAY);
       }
 
-            // ############################################################## GYROSCOPE_READ ############################################################## 
+      // ok ############################################################## GYROSCOPE_READ ############################################################## 
       // 250gradi/s, 0,5 "sampling rate", measured = +40, inclinazione attuale = ?
       // variazione_gradi = +40g/s * 0,5s = +20gradi
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &gyro_x_out_h, 1, 50);
@@ -388,7 +388,7 @@ int main(void)
       gyro_y_scaled = gyro_y_final_value / 131;
       gyro_z_scaled = gyro_z_final_value / 131;
 
-      // ############################################################## ACCELLEROMETER READ ############################################################## 
+      // ok ############################################################## ACCELLEROMETER READ ############################################################## 
       // 1g = 9,8m/s2, 0,5s "sampling rate", mesured = 2g, m_percorsi = ?
       // m = 2g * s2 -> 2(9.8m/s2) * (0,5s)2 = 19.6m percorso idealmente (?)
       HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &acc_x_out_h, 1, 50);
@@ -448,7 +448,7 @@ int main(void)
       HAL_UART_Transmit(&huart2, (uint8_t*)acc_z_value_out, strlen(acc_z_value_out), 1000);
       HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
 
-    // ############################################################## GYRO_CONFIG ##############################################################
+    // ok ############################################################## GYRO_CONFIG ##############################################################
 
       // Triggers gyroscope self-test and configures gyroscope full scale range.
 
@@ -479,7 +479,7 @@ int main(void)
         HAL_UART_Transmit(&huart2, "Gyroscope not configured!", strlen("Gyroscope not configured!"), HAL_MAX_DELAY);
       }
 
-      // ############################################################## ACCEL_CONFIG ##############################################################
+      // ok ############################################################## ACCEL_CONFIG ##############################################################
     
       // Triggers accellerometer self-test and configures gyroscope full scale range.
 
@@ -511,10 +511,7 @@ int main(void)
       }
 
       #endif
-      
-      
-
-
+    
     }
 
     // itoa(getTemperature(), output_sting_final_temp, 10);

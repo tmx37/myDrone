@@ -33,39 +33,55 @@ typedef struct
     DrvGY_MPU60X0_MasterTransmitCB_t pfMasterTransmitCB;
     DrvGY_MPU60X0_MasterReceiveCB_t pfMasterReceiveCB;
     DrvGY_MPU60X0_DelayCB_t pfDelayCB;
-
-
 } DrvMPU60X0_Config_t;
 
 typedef struct 
 {
+    uint8_t RESET_STARTUP;
+    uint8_t PWE_MGMT_1_SETTINGS;
+    uint8_t DLPF_FSYNC_SETTINGS;
+    uint8_t GYRO_SETTINGS;
+    uint8_t FS_SEL;  // Gyroscope full scale range output
+    uint8_t ACCEL_SETTINGS;
+    uint8_t AFS_SEL; // Accellerometer full scale range output
+} DrvMPU60X0_Settings_t;
+
+
+typedef struct 
+{
     int16_t XG, YG, ZG;
-} GY_Data;
+} GY_Data_t;
 
 typedef struct 
 {
     int16_t XA, YA, ZA;
-} ACC_Data;
+} ACC_Data_t;
 
 typedef struct 
 {
     int16_t XR, YR, ZR;
-} XYZ_Angles;
+} XYZ_Angles_t;
 
 /*
  > INITIALIZE ONLY ONCE SURE YOU ARE IN A PLAIN SURFACE (analyze IIS2ICLX 2-Axis Digital Inclinometer) 
  > Try an accellerometer based approach: if only Z ha accellerometer value = 1, its fine. Find out if it is possible to have a greater resolution.
  > Use FreeRTOS because this library introduces Delays and use that will slow down a "linear" execution system
  */
-UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData);
+UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData, const DrvMPU60X0_Settings_t *pSettingsData);
+
+UtlGen_Err_t DrvGY_MPU60X0_GyroSignalPathReset();
+
+UtlGen_Err_t DrvGY_MPU60X0_AccelSignalPathReset();
 
 UtlGen_Err_t setSamplingTime(uint8_t mseconds);
 
-UtlGen_Err_t getGyro(GY_Data *output);
+UtlGen_Err_t getGyro(GY_Data_t *output);
 
-UtlGen_Err_t getAngles(XYZ_Angles *output);
+UtlGen_Err_t getAccel(ACC_Data_t *output);
 
-UtlGen_Err_t getAccel(ACC_Data *output);
+UtlGen_Err_t getAngles(XYZ_Angles_t *output);
+
+UtlGen_Err_t isDeviceOnPlainSurface(bool *output);
 
 #ifdef __cplusplus
 } /* extern "C" */
