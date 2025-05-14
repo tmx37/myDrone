@@ -118,6 +118,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
    int32_t CH1_DC = 0;
 
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -145,40 +146,53 @@ int main(void)
   //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   if(DrvGYBMP180Cfg_Init() != UTLGEN_OK)
-	  HAL_UART_Transmit(&huart2, "AAAAAAAAAAAAAAAAAAA", strlen("AAAAAAAAAAAAAAAAAAA"), 1000);
+	  HAL_UART_Transmit(&huart2, "Can't start BMP180 driver!", strlen("Can't start BMP180 driver!"), 1000);
+
+  if (DrvMPU60X0Cfg_Init() != UTLGEN_OK)
+  	  HAL_UART_Transmit(&huart2, "Can't start MPU60X0 driver!", strlen("Can't start MPU60X0 driver!"), 1000);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  const uint8_t* line_0 = " ";
+  const uint8_t* new_line = "\r\n";
 
-  uint8_t* line_0 = " ";
-  uint8_t* new_line = "\r\n";
+  const uint8_t* line_1 = "Raw_Pres: ";
+  const uint8_t* line_2 = "Pressione: ";
+  const uint8_t* line_3 = "[Pa] ";
 
-  uint8_t* line_1 = "Raw_Pres: ";
-  uint8_t* line_2 = "Pressione: ";
-  uint8_t* line_3 = "[Pa] ";
+  const uint8_t* line_4 = "| Altitude: ";
+  const uint8_t* line_5 = "[m] ";
 
-  uint8_t* line_4 = "| Altitude: ";
-  uint8_t* line_5 = "[m] ";
+  const uint8_t* line_6 = "| Temperatura: ";
+  const uint8_t* line_7 = " -> ";
+  const uint8_t* line_8 = "[C]";
 
-  uint8_t* line_6 = "| Temperatura: ";
-  uint8_t* line_7 = " -> ";
-  uint8_t* line_8 = "[C]";
+  const uint8_t* GY_X = "GY_X: ";
+  const uint8_t* GY_Y = "GY_Y: ";
+  const uint8_t* GY_Z = "GY_Z: ";
 
-  uint8_t* GY_X = "GY_X: ";
-  uint8_t* GY_Y = "GY_Y: ";
-  uint8_t* GY_Z = "GY_Z: ";
-
-  uint8_t* ACC_X = "ACC_X: ";
-  uint8_t* ACC_Y = "ACC_Y: ";
-  uint8_t* ACC_Z = "ACC_Z: ";
-
+  const uint8_t* ACC_X = "ACC_X: ";
+  const uint8_t* ACC_Y = "ACC_Y: ";
+  const uint8_t* ACC_Z = "ACC_Z: ";
 
   char output_sting_final_temp[20];
   char output_sting_final_pres[20];
   char output_sting_altitude[20];
 
+  char output_sting_final_gx[20];
+  char output_sting_final_gy[20];
+  char output_sting_final_gz[20];
+
+  char output_sting_final_ax[20];
+  char output_sting_final_ay[20];
+  char output_sting_final_az[20];
+
+  GY_Data_t GYOutputData;
+  ACC_Data_t ACCELOutputData;
+
+  #if 0
   uint8_t test_WhoAmI[8] = {0};
 
   uint8_t gyro_x_raw[2] = {0};
@@ -243,14 +257,15 @@ int main(void)
   messageConfig[0] = 0x1C;
   messageConfig[1] = 0x00; // -> puts AFS_SEL = 0 and sets the sensitivity
   HAL_I2C_Master_Transmit(&hi2c1, MPU6000_SLAVE_0 << 1, &messageConfig[0], 2, 10);
+  #endif
 
   while (1)
   {
+    #if 0
+
     if (HAL_I2C_IsDeviceReady(&hi2c1, MPU6000_SLAVE_0, 5, HAL_MAX_DELAY))
-    {
-    
-      #if 1
-      // ############################################################## WHO_AM_I ##############################################################
+    { 
+      // ok ############################################################## WHO_AM_I ##############################################################
       uint8_t who_am_i_rx[1];
       HAL_I2C_Mem_Read(&hi2c1, MPU6000_SLAVE_0 << 1, MPU6000_WHO_AM_I, 1, who_am_i_rx, 1, HAL_MAX_DELAY);
 
@@ -304,7 +319,7 @@ int main(void)
         HAL_UART_Transmit(&huart2, "Cant set internal clock reference set", strlen("Cant set internal clock reference set"), HAL_MAX_DELAY);
       }
 
-      // ############################################################## PWR_MGMT_2 ##############################################################
+      // X ############################################################## PWR_MGMT_2 ##############################################################
 
       // can be used with PWR_MGMT_1 to enable confugurations such as Accelerometer Only low power mode (CYCLE=1 + SLEEP=0 + TEMP_DIS=1 + STBY_XG,STBY_YG,STBY_ZG=1)
 
@@ -346,7 +361,7 @@ int main(void)
         HAL_UART_Transmit(&huart2, "Cant set internal clock reference set", strlen("Cant set internal clock reference set"), HAL_MAX_DELAY);
       }    
         
-      // ############################################################## SMPRT_DIV ##############################################################
+      // ok ############################################################## SMPRT_DIV ##############################################################
       // imposta il rate di sampling dei registri valore dei sensori, della coda fifo e di DMP
       // sampling rate = Gyroscope output rate / (1 + SMPLRT_DIV)
 
@@ -510,27 +525,96 @@ int main(void)
         HAL_UART_Transmit(&huart2, "Accellerometer not configured!", strlen("Accellerometer not configured!"), HAL_MAX_DELAY);
       }
 
-      #endif
     
     }
+  #endif
 
-    // itoa(getTemperature(), output_sting_final_temp, 10);
-	  // itoa(getPressure(), output_sting_final_pres, 10);
-	  // itoa(getAltitude(), output_sting_altitude, 10);
+  #if 0
+    itoa(getTemperature(), output_sting_final_temp, 10);
+	  itoa(getPressure(), output_sting_final_pres, 10);
+	  itoa(getAltitude(), output_sting_altitude, 10);
 
-	  // HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
-	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
-	  // HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
+	  HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
+	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
 
-	  // HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
-	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
-	  // HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
+	  HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
+	  HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
 
-	  // HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
-	  // HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
-	  // HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
+	  HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
+	  HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
 
-	  // HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
+
+    HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
+	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
+
+  #endif
+    
+  #if 0
+    if(getGyro(&GYOutputData) == UTLGEN_OK)
+    {       
+      itoa(GYOutputData.XG, output_sting_final_gx, 10);
+      HAL_UART_Transmit(&huart2, GY_X, strlen(GY_X), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gx, strlen(output_sting_final_gx), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+
+      itoa(GYOutputData.YG, output_sting_final_gy, 10);
+      HAL_UART_Transmit(&huart2, GY_Y, strlen(GY_Y), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gy, strlen(output_sting_final_gy), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+      
+      itoa(GYOutputData.ZG, output_sting_final_gz, 10);
+      HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
+      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gz, strlen(output_sting_final_gz), 1000);
+      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+    }
+    else
+    {
+        HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
+        HAL_UART_Transmit(&huart2, "Can't get GY!!!", strlen("Can't get GY!!!"), 1000);
+        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+    }
+    
+    if (getAccel(&ACCELOutputData) == UTLGEN_OK)
+    {
+        itoa(ACCELOutputData.XA, output_sting_final_ax, 10);
+        HAL_UART_Transmit(&huart2, ACC_X, strlen(ACC_X), 1000);
+        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_ax, strlen(output_sting_final_ax), 1000);
+        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+
+        itoa(ACCELOutputData.YA, output_sting_final_ay, 10);
+        HAL_UART_Transmit(&huart2, ACC_Y, strlen(ACC_Y), 1000);
+        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_ay, strlen(output_sting_final_ay), 1000);
+        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
+      
+        itoa(ACCELOutputData.ZA, output_sting_final_az, 10);
+        HAL_UART_Transmit(&huart2, ACC_Z, strlen(ACC_Z), 1000);
+        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_az, strlen(output_sting_final_az), 1000);
+        HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
+    }
+    else
+    {
+        HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
+        HAL_UART_Transmit(&huart2, "Can't get ACCEL!!!", strlen("Can't get ACCEL!!!"), 1000);
+        HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
+    }
+
+    #endif
+
+    bool test_bolla;
+    isDeviceOnPlainSurface(&test_bolla);
+    HAL_UART_Transmit(&huart2, "Is the device in bolla? ", strlen("Is the device in bolla? "), 1000);
+    if (test_bolla)
+        HAL_UART_Transmit(&huart2, "CIANO XE IN BOLLA!", strlen("CIANO XE IN BOLLA!"), 1000);
+    else
+        HAL_UART_Transmit(&huart2, "NO A XE IN BOLLA..", strlen("NO A XE IN BOLLA.."), 1000);
+    HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
+    
+    
 
 	  HAL_Delay(100);
 

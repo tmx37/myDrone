@@ -103,6 +103,7 @@
     mSettingsData.FS_SEL = S_FS_SEL_250;
     mSettingsData.ACCEL_SETTINGS = S_AFS_SEL_2G;
     mSettingsData.AFS_SEL = S_AFS_SEL_2G;
+    mSettingsData.SMPRT_DIVIDER = 0; // Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV) 
 
     ErrCode = DrvGY_MPU60X0_Init(&mConfigData, &mSettingsData);
     return ErrCode;

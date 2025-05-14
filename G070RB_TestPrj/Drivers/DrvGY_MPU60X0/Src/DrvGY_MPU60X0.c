@@ -7,11 +7,12 @@
 
 #include "DrvGY_MPU60X0.h"
 
-#include <string.h>
-
 /******************************************************************************
  * Module Preprocessor Constants
  ******************************************************************************/
+
+// TODO: find another solution to this
+#define MPU60X0_ADDR 0x0068
 
 #define MPU60X0_SAMPLE_RATE_DIV 0x19
 
@@ -51,7 +52,7 @@
 
  static DrvGY_MPU60X0_WriteRegisterCB_t mWriteRegistersCB;
  static DrvGY_MPU60X0_ReadRegisterCB_t mReadRegistersCB;
- static DrvGY_MPU60X0_IsDeviceReadyCB_t mIsDeviceReady;
+ static DrvGY_MPU60X0_IsDeviceReadyCB_t mIsDeviceReadyCB;
  static DrvGY_MPU60X0_MasterTransmitCB_t mMasterTrasmitCB;
  static DrvGY_MPU60X0_MasterReceiveCB_t mMasterReceiveCB;
  static DrvGY_MPU60X0_DelayCB_t mDelayCB;
@@ -60,8 +61,16 @@
 
  static XYZ_Angles_t CurrentAngle = { 0, 0, 0 };
 
- static uint8_t XGRaw[2], YGRaw[2], ZGRaw[2] = { 0, 0 };
- static uint8_t XARaw[2], YARaw[2], ZARaw[2] = { 0, 0 };
+ static uint8_t gx_out_addr_h = MPU60X0_GYRO_X_OUT_H; 
+ static uint8_t gy_out_addr_h = MPU60X0_GYRO_Y_OUT_H; 
+ static uint8_t gz_out_addr_h = MPU60X0_GYRO_Z_OUT_H; 
+
+ static uint8_t ax_out_addr_h = MPU60X0_ACCEL_X_OUT_H;
+ static uint8_t ay_out_addr_h = MPU60X0_ACCEL_Y_OUT_H; 
+ static uint8_t az_out_addr_h = MPU60X0_ACCEL_Z_OUT_H; 
+
+ static uint8_t XGRaw[2], YGRaw[2], ZGRaw[2] = { 0 };
+ static uint8_t XARaw[2], YARaw[2], ZARaw[2] = { 0 };
 
  static int t_LSB_Gyro_Sensitivity, t_LSB_Accel_Sensitivity = 0;
 
@@ -69,8 +78,17 @@
  * Function Definitions Private
  ******************************************************************************/
 
+ void SelectCorrectLSB();
+
 UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData, const DrvMPU60X0_Settings_t *pSettingsData)
 {
+    mIsDeviceReadyCB = pConfigData->pfIsDeviceReadyI2cCB;
+    mMasterReceiveCB = pConfigData->pfMasterReceiveCB;
+    mMasterTrasmitCB = pConfigData->pfMasterTransmitCB;
+    mReadRegistersCB = pConfigData->pfReadRegisterI2cCB;
+    mWriteRegistersCB = pConfigData->pfWriteRegistersI2cCB;
+    mDelayCB = pConfigData->pfDelayCB;
+
     if (pConfigData == NULL || pSettingsData == NULL)
         return UTLGEN_ERR_INVALID_ARG;
 
@@ -78,7 +96,7 @@ UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData, const Dr
 
     SelectCorrectLSB();
     
-    if (!mIsDeviceReady(0, MPU60X0_ADDR, 5))
+    if (!mIsDeviceReadyCB(0, MPU60X0_ADDR, 5))
         return UTLGEN_ERR_NOT_READY;
 
     // PowerUp Reset
@@ -93,6 +111,10 @@ UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData, const Dr
     // DLPF(Digital Low Pass Filter) and FSYNC (Frame Syncronization) pin sampling configuration
     uint8_t DLPF_FSYNC_Config_Settings[2] = { MPU60X0_CONFIG, mSettings.DLPF_FSYNC_SETTINGS };
     mMasterTrasmitCB(0, MPU60X0_ADDR << 1, DLPF_FSYNC_Config_Settings, 2);
+
+    // Sample rate configuration (SMPRT_DIV)
+    // uint8_t SampleRateDivider = 0;
+    // mWriteRegistersCB(0, MPU60X0_ADDR << 1, MPU60X0_SAMPLE_RATE_DIV, &SampleRateDivider, 1);
 
     // Gyroscope configuration
     uint8_t GYRO_Config_Settings[2] = { MPU60X0_GYRO_CONFIG, mSettings.GYRO_SETTINGS };
@@ -109,7 +131,7 @@ UtlGen_Err_t DrvGY_MPU60X0_Init(const DrvMPU60X0_Config_t *pConfigData, const Dr
     return UTLGEN_OK;
 }
 
-UtlGen_Err_t DrvGY_MPU60X0_SignalPathReset()
+UtlGen_Err_t DrvGY_MPU60X0_GyroSignalPathReset()
 {
     if (!mIsDeviceReady(0, MPU60X0_ADDR, 5))
         return UTLGEN_ERR_NOT_READY;
@@ -148,16 +170,16 @@ UtlGen_Err_t getGyro(GY_Data_t *output)
     if (output == NULL) 
         return UTLGEN_ERR_INVALID_ARG;
 
-    if (!mIsDeviceReady(0, MPU60X0_ADDR, 5))
+    if (!mIsDeviceReadyCB(0, MPU60X0_ADDR, 5))
         return UTLGEN_ERR_NOT_READY;
 
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_GYRO_X_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &gx_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &XGRaw[0], 2);
     
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_GYRO_Y_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &gy_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &YGRaw[0], 2);
     
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_GYRO_Z_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &gz_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &ZGRaw[0], 2);
 
     output->XG = (XGRaw[0] << 8) + XGRaw[1];
@@ -181,16 +203,16 @@ UtlGen_Err_t getAccel(ACC_Data_t *output)
     if (output == NULL) 
         return UTLGEN_ERR_INVALID_ARG;
 
-    if (!mIsDeviceReady(0, MPU60X0_ADDR, 5))
+    if (!mIsDeviceReadyCB(0, MPU60X0_ADDR, 5))
         return UTLGEN_ERR_NOT_READY;
 
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_ACCEL_X_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &ax_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &XARaw[0], 2);
     
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_ACCEL_Y_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &ay_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &YARaw[0], 2);
     
-    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, (uint8_t*)MPU60X0_ACCEL_Z_OUT_H, 1);
+    mMasterTrasmitCB(0, MPU60X0_ADDR << 1, &az_out_addr_h, 1);
     mMasterReceiveCB(0, MPU60X0_ADDR << 1, &ZARaw[0], 2);
 
     output->XA = (XARaw[0] << 8) + XARaw[1];
@@ -234,8 +256,32 @@ UtlGen_Err_t isDeviceOnPlainSurface(bool *output)
     if (output == NULL) 
         return UTLGEN_ERR_INVALID_ARG;
         
+    ACC_Data_t t_acc_data;
+    if (getAccel(&t_acc_data) != UTLGEN_OK)
+        return UTLGEN_ERR_NOT_FOUND;
+    
+    if (t_acc_data.XA == 0 && t_acc_data.YA == 0 && t_acc_data.ZA == 1)
+        *output = true;
+    else
+        *output = false;
+
     return UTLGEN_OK;
 }
+
+UtlGen_Err_t isMPU60X0Here(bool *output)
+{
+    if (output == NULL) 
+        return UTLGEN_ERR_INVALID_ARG;
+
+    uint8_t outputBuffer;
+    if(mReadRegistersCB(0, MPU60X0_ADDR << 1, MPU60X0_WHO_AM_I, &outputBuffer, 1) != 0) 
+        return UTLGEN_ERR_NOT_FOUND;
+    
+    *output = (outputBuffer) ? true : false;
+
+    return UTLGEN_OK;
+}
+
 
 void SelectCorrectLSB()
 {
