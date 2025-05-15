@@ -8,11 +8,11 @@ Idee schede:
 - STM32F407G-DISC1
 
 Considerazioni thread previsti:
-- Controllo Stabilità (critico, real-time) // per correzzioni critiche direttamente su motori tramite accesso ai sensori
-- API sensori ambientali (BMP180, GPS, HMC5883L) // Valutare se fornire un API unica, in quanto i sensori forniscono misurazioni ridondanti
-- API sensori posizione/safety (MPU60X0, Distanza laser)
-- API sensori tensione/corrente
-- API controllo ESC (con vincoli imposti dal thread di stabilità) // Il controllo degli ESC deve essere limitato dal thread di "Controllo stabilità" quando si verificano situazioni "critiche" o per evitare si verifichino
+- Controllo Stabilità (critico, real-time) // per correzzioni critiche direttamente su motori tramite accesso ai sensori, valutare KALMAN per mantenimento stabile del controllo
+- API sensori ambientali (OK~BMP180, OK~GPS, TODO~HMC5883L) //  
+- API sensori posizione/safety (OK~MPU60X0, TODO~Distanza laser)
+- API sensori tensione/corrente (TODO)
+- API controllo ESC (TODO) (con vincoli imposti dal thread di stabilità) // Il controllo degli ESC deve essere limitato dal thread di "Controllo stabilità" quando si verificano situazioni "critiche" o per evitare si verifichino
 - Communication Layer con Raspberry Pi (seriale, probabilmente UART o USB)
 
 Considerazioni risorse necessarie:
@@ -24,6 +24,7 @@ Considerazioni risorse necessarie:
 - Timer/PWM per il controllo degli ESC.
 
 ### Raspberry PI Zero 2W -> Comunicazione con STM32 per invio comandi e ricezione info + Streaming video RSTP con Controller + Comunicazione con Controller
+- Implementazione Kalman(?) per mantenimento della traiettoria da GPS
 - Funzione: Direzione tramite coordinate GPS
 - Funzione: Streaming video
 - Funzione: Trova zona sicura per atterraggio su piano
