@@ -8,7 +8,7 @@ Idee schede:
 - STM32F407G-DISC1
 
 Considerazioni thread previsti:
-- Controllo Stabilità (critico, real-time) // per correzzioni critiche direttamente su motori tramite accesso ai sensori, valutare KALMAN per mantenimento stabile del controllo
+- Controllo Stabilità (critico, real-time) // per correzzioni critiche direttamente su motori tramite accesso ai sensori, valutare KALMAN per mantenimento stabile del controllo oppure Linear–quadratic regulator controllo sulla base delle letture dei sensori per mantenere il controllo stabile -> Mathlab per simulazione e parametrizzazione delle equazioni di stabilità e successiva implementazione.
 - API sensori ambientali (OK~BMP180, OK~GPS, TODO~HMC5883L) //  
 - API sensori posizione/safety (OK~MPU60X0, TODO~Distanza laser)
 - API sensori tensione/corrente (TODO)
