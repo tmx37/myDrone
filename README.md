@@ -3,6 +3,12 @@ STM32 + Raspberry Pi0 2W based drone
 
 ### STM32 (+ FreeRTOS) -> Controllo driver diretto + Comunicazione con Raspberry per comandi ed invio info + Procedure safety critiche
 
+Useful Links
+- https://www.eeweb.com/design-fundamentals-for-drone-motor-controller/
+- https://it.wikipedia.org/wiki/Filtro_di_Kalman
+- https://www.electrical4u.com/field-oriented-control/
+- https://en.wikipedia.org/wiki/Linear%E2%80%93quadratic_regulator
+
 Idee schede:
 - NUCLEO-H753ZI
 - STM32F407G-DISC1
