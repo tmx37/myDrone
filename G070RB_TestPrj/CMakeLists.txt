@@ -54,6 +54,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src/DrvGY_MPU60X0.c
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg/DrvGY_MPU60X0_Cfg.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/DrvGY_HMC5883L.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg/DrvGY_HMC5883L_Cfg.c
     ${CMAKE_SOURCE_DIR}/Core/Src/DrvI2c.c
 )
 
@@ -65,6 +68,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg
 )
 
 # Add project symbols (macros)

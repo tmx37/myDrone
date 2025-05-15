@@ -24,6 +24,7 @@
 
 #include "DrvGY_BMP180.h"
 #include "DrvGY_MPU60X0.h"
+#include "DrvGY_MPU60X0.h"
 
 /* USER CODE END Includes */
 
@@ -113,6 +114,9 @@ int main(void)
 
   if (DrvMPU60X0Cfg_Init() != UTLGEN_OK)
   	  HAL_UART_Transmit(&huart2, "Can't start MPU60X0 driver!", strlen("Can't start MPU60X0 driver!"), 1000);
+
+  if (DrvHMC5883LCfg_Init() != UTLGEN_OK)
+  	  HAL_UART_Transmit(&huart2, "Can't start HMC5883L driver!", strlen("Can't start HMC5883L driver!"), 1000);
 
   /* USER CODE END 2 */
 

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "stm32g0xx_hal.h": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "drvgy_mpu60x0_cfg.h": "c"
     }
 }
