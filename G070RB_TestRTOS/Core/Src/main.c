@@ -44,6 +44,7 @@
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
+osThreadId helloWorkdHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,7 +61,10 @@ void StartDefaultTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HelloWorld_UART() {
+  HAL_UART_Transmit_IT(&huart2, "RTOS hello World!\r\n", strlen("RTOS hello World!\r\n"));
+  osDelay(100);
+}
 /* USER CODE END 0 */
 
 /**
@@ -114,9 +118,12 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
+  /* definition and creation of defaultTask */ 
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  osThreadDef(HelloWord, HelloWorld_UART, osPriorityNormal, 0, 128);
+  helloWorkdHandle = osThreadCreate(osThread(HelloWord), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -278,7 +285,9 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    // HAL_UART_Transmit(&huart2, "RTOS hello World!\r\n", strlen("RTOS hello World!\r\n"), HAL_MAX_DELAY);
+
+    osDelay(100);
   }
   /* USER CODE END 5 */
 }
