@@ -35,6 +35,9 @@
 #define READ_BMP180 0
 #define READ_MPU60X0_BOLLA_TEST 0
 
+#define HMC5883L_ADDR_READ 0x3D
+#define HMC5883L_ADDR_WRITE 0x3C
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -248,6 +251,8 @@ int main(void)
     HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
     
     #endif
+
+    
 
 	  HAL_Delay(100);
 
