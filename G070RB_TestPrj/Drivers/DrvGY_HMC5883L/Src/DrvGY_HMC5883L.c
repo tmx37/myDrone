@@ -23,7 +23,8 @@ UtlGen_Err_t DrvHMC5883L_Init(const DrvHMC5883L_Config_t *pConfigData)
     mMasterTrasmitCB = pConfigData->pfMasterTransmitI2cCB;
     mReadRegisterCB = pConfigData->pfMasterReveiceCB;
 
-    
+    // Device time to be ready for I2C commands
+    mDelayCB(260);
 
     return UTLGEN_OK;
 }
