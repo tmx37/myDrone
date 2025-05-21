@@ -34,9 +34,34 @@
 #define READ_MPU60X0_GYRO_ACCEL 0
 #define READ_BMP180 0
 #define READ_MPU60X0_BOLLA_TEST 0
+#define READ_HMC5883L_BUSSOLA 1 
+
+#define HMC5883L_DEVICE_ADDR (0x1E << 1) 
 
 #define HMC5883L_ADDR_READ 0x3D
 #define HMC5883L_ADDR_WRITE 0x3C
+
+#define HMC5883L_CONFIG_A 0X00
+#define HMC5883L_CONFIG_B 0X01
+#define HMC5883L_MODE 0X02
+#define HMC5883L_OUT_X_MSB 0X03
+#define HMC5883L_OUT_X_LSB 0X04
+#define HMC5883L_OUT_Z_MSB 0X05
+#define HMC5883L_OUT_Z_LSB 0X06
+#define HMC5883L_OUT_Y_MSB 0X07
+#define HMC5883L_OUT_Y_LSB 0X08
+#define HMC5883L_STATUS 0X09
+#define HMC5883L_ID_A 0X0A
+#define HMC5883L_ID_B 0X0B
+#define HMC5883L_ID_C 0X0C
+
+#define HMC5883l_ADD_DATAX_MSB_MULTI (HMC5883L_OUT_X_MSB | 0x80)
+#define HMC5883l_ADD_DATAY_MSB_MULTI (HMC5883L_OUT_Y_MSB | 0x80)
+#define HMC5883l_ADD_DATAZ_MSB_MULTI (HMC5883L_OUT_Z_MSB | 0x80)
+
+#define HMC5883L_READY_STATE 0x01
+#define HMC5883L_LOCK_STATE 0x02
+
 
 /* USER CODE END PTD */
 
@@ -162,6 +187,26 @@ int main(void)
   GY_Data_t GYOutputData;
   ACC_Data_t ACCELOutputData;
 
+
+  uint8_t CRA_config = 0x78;  // Configuration register A, defaults to 0x10 (00010000)
+  uint8_t CRB_config = 0xA0;  // Configuration register B, defaults to 0x20 (00100000)
+  uint8_t MODE_config = 0x00; // Selects measurement mode
+
+  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &CRA_config, 1, HAL_MAX_DELAY);
+  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &CRB_config, 1, HAL_MAX_DELAY);
+  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &MODE_config, 1, HAL_MAX_DELAY);
+
+  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
+  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
+  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_MODE, 1, 0x00, 1, HAL_MAX_DELAY);
+
+  uint8_t X_out_raw[2], Y_out_raw[2], Z_out_raw[2];
+  uint16_t X_out_full, Y_out_full, Z_out_full = 0;
+
+  uint8_t HMC_STATE = 0;
+
+  // HAL_Delay(650);
+
   while (1)
   {
   #if READ_BMP180
@@ -240,7 +285,7 @@ int main(void)
 
     #endif
 
-    #if READ_MPU60X0_BOLLA_TEST
+  #if READ_MPU60X0_BOLLA_TEST
     bool test_bolla;
     isDeviceOnPlainSurface(&test_bolla);
     HAL_UART_Transmit(&huart2, "Is the device in bolla? ", strlen("Is the device in bolla? "), 1000);
@@ -252,9 +297,31 @@ int main(void)
     
     #endif
 
+  #if READ_HMC5883L_BUSSOLA
+
+    // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_STATUS, 1, &HMC_STATE, 1, HAL_MAX_DELAY);
+
+    // if (HMC_STATE == HMC5883L_READY_STATE)
+    // {
+      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAX_MSB_MULTI, 1, &X_out_raw, 2, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAY_MSB_MULTI, 1, &Y_out_raw, 2, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAZ_MSB_MULTI, 1, &Z_out_raw, 2, HAL_MAX_DELAY);
+
+      //HAL_I2C_Master_Receive(&hi2c1, HMC5883L_ADDR_READ, )
+      HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_OUT_X_MSB, 1, HAL_MAX_DELAY);
+
+      X_out_full = ((X_out_raw[1] << 8) | X_out_raw[0])/660.f;
+      Y_out_full = ((Y_out_raw[1] << 8) | Y_out_raw[0])/660.f;
+      Z_out_full = ((Z_out_raw[1] << 8) | Z_out_raw[0])/660.f;  
+
+    //   X_out_full = ((X_out_raw[1] << 8) + X_out_raw[0])/660.f;
+    //   Y_out_full = ((Y_out_raw[1] << 8) + Y_out_raw[0])/660.f;
+    //   Z_out_full = ((Z_out_raw[1] << 8) + Z_out_raw[0])/660.f;  
+    // }
     
 
-	  HAL_Delay(100);
+    #endif
+	  HAL_Delay(80);
 
     /* USER CODE END WHILE */
 

@@ -2,6 +2,8 @@
     "files.associations": {
         "stm32g0xx_hal.h": "c",
         "cstdint": "c",
-        "drvgy_mpu60x0_cfg.h": "c"
+        "drvgy_mpu60x0_cfg.h": "c",
+        "drvgy_bmp180_cfg.h": "c",
+        "drvi2c.h": "c"
     }
 }
