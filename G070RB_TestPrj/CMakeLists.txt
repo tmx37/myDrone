@@ -48,6 +48,9 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src/DrvESC_PWM.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg/DrvESC_PWM_Cfg.c
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src/DrvGY_BMP180.c
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg/DrvGY_BMP180_Cfg.c
@@ -65,6 +68,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Core/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Inc
