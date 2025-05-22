@@ -184,7 +184,9 @@
 				33,
 				34,
 				35,
-				36
+				36,
+				37,
+				38
 			]
 		},
 		{
@@ -279,7 +281,7 @@
 			"language" : "ASM",
 			"sourceIndexes" : 
 			[
-				37
+				39
 			]
 		}
 	],
@@ -316,7 +318,7 @@
 				3,
 				6,
 				9,
-				37
+				39
 			]
 		},
 		{
@@ -355,7 +357,9 @@
 				33,
 				34,
 				35,
-				36
+				36,
+				37,
+				38
 			]
 		}
 	],
@@ -547,6 +551,18 @@
 			"backtrace" : 2,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c",
 			"sourceGroupIndex" : 1
 		},
 		{
