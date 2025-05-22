@@ -5,7 +5,9 @@
  * @author  iek
  */
 
+ //#include "main.h"
 #include "HMC5883L.h"
+#include <stdint.h>
 
 /**
  * @brief  Sends data to a register on the HMC5883L via I2C.

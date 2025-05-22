@@ -57,6 +57,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/DrvGY_HMC5883L.c
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg/DrvGY_HMC5883L_Cfg.c
+    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/HMC5883L.c
     ${CMAKE_SOURCE_DIR}/Core/Src/DrvI2c.c
 )
 
@@ -71,6 +72,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/STM32G0xx_HAL_Driver/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32G0xx/Include
 )
 
 # Add project symbols (macros)

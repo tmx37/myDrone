@@ -24,7 +24,7 @@
 
 #include "DrvGY_BMP180.h"
 #include "DrvGY_MPU60X0.h"
-#include "DrvGY_MPU60X0.h"
+//#include "DrvGY_MPU60X0.h"
 
 #include "HMC5883L.h"
 
@@ -33,10 +33,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define READ_MPU60X0_GYRO_ACCEL 0
-#define READ_BMP180 0
-#define READ_MPU60X0_BOLLA_TEST 0
-#define READ_HMC5883L_BUSSOLA 1 
+#define READ_MPU60X0_GYRO_ACCEL 1
+#define READ_BMP180 1
+#define READ_MPU60X0_BOLLA_TEST 1
+#define READ_HMC5883L_BUSSOLA 0 
 
 #define HMC5883L_DEVICE_ADDR 0x1E
 
@@ -186,6 +186,10 @@ int main(void)
   char output_sting_final_ax[20];
   char output_sting_final_ay[20];
   char output_sting_final_az[20];
+
+  char output_sting_final_mx[20];
+  char output_sting_final_my[20];
+  char output_sting_final_mz[20];
 #pragma endregion
 
   GY_Data_t GYOutputData;
@@ -310,6 +314,19 @@ int main(void)
     HMC_Read_All(&compass);
     HAL_Delay(1000);
 
+    itoa(compass.compass_x, output_sting_final_mx, 10);
+    itoa(compass.compass_y, output_sting_final_my, 10);
+    itoa(compass.compass_z, output_sting_final_mz, 10);
+
+    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_mx, strlen(output_sting_final_mx), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart2, " ", strlen(" "), HAL_MAX_DELAY);
+    
+    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_my, strlen(output_sting_final_my), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart2, " ", strlen(" "), HAL_MAX_DELAY);
+    
+    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_mz, strlen(output_sting_final_mz), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
+
     // if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_DEVICE_ADDR, 5, HAL_MAX_DELAY) == HAL_OK)
     // {
     // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_STATUS, 1, &HMC_STATE, 1, HAL_MAX_DELAY);
@@ -338,7 +355,7 @@ int main(void)
     
 
     #endif
-	  HAL_Delay(80);
+	  //HAL_Delay(80);
 
     /* USER CODE END WHILE */
 
