@@ -26,6 +26,8 @@
 #include "DrvGY_MPU60X0.h"
 #include "DrvGY_MPU60X0.h"
 
+#include "HMC5883L.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,7 +38,7 @@
 #define READ_MPU60X0_BOLLA_TEST 0
 #define READ_HMC5883L_BUSSOLA 1 
 
-#define HMC5883L_DEVICE_ADDR (0x1E << 1) 
+#define HMC5883L_DEVICE_ADDR 0x1E
 
 #define HMC5883L_ADDR_READ 0x3D
 #define HMC5883L_ADDR_WRITE 0x3C
@@ -55,9 +57,9 @@
 #define HMC5883L_ID_B 0X0B
 #define HMC5883L_ID_C 0X0C
 
-#define HMC5883l_ADD_DATAX_MSB_MULTI (HMC5883L_OUT_X_MSB | 0x80)
-#define HMC5883l_ADD_DATAY_MSB_MULTI (HMC5883L_OUT_Y_MSB | 0x80)
-#define HMC5883l_ADD_DATAZ_MSB_MULTI (HMC5883L_OUT_Z_MSB | 0x80)
+// #define HMC5883l_ADD_DATAX_MSB_MULTI (HMC5883L_OUT_X_MSB | 0x80)
+// #define HMC5883l_ADD_DATAY_MSB_MULTI (HMC5883L_OUT_Y_MSB | 0x80)
+// #define HMC5883l_ADD_DATAZ_MSB_MULTI (HMC5883L_OUT_Z_MSB | 0x80)
 
 #define HMC5883L_READY_STATE 0x01
 #define HMC5883L_LOCK_STATE 0x02
@@ -147,9 +149,10 @@ int main(void)
   	  HAL_UART_Transmit(&huart2, "Can't start HMC5883L driver!", strlen("Can't start HMC5883L driver!"), 1000);
 
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+#pragma region "PORCODIO"
+
   const uint8_t* line_0 = " ";
   const uint8_t* new_line = "\r\n";
 
@@ -183,6 +186,7 @@ int main(void)
   char output_sting_final_ax[20];
   char output_sting_final_ay[20];
   char output_sting_final_az[20];
+#pragma endregion
 
   GY_Data_t GYOutputData;
   ACC_Data_t ACCELOutputData;
@@ -192,13 +196,12 @@ int main(void)
   uint8_t CRB_config = 0xA0;  // Configuration register B, defaults to 0x20 (00100000)
   uint8_t MODE_config = 0x00; // Selects measurement mode
 
-  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &CRA_config, 1, HAL_MAX_DELAY);
-  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &CRB_config, 1, HAL_MAX_DELAY);
-  HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_DEVICE_ADDR, &MODE_config, 1, HAL_MAX_DELAY);
-
-  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
-  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
-  // HAL_I2C_Mem_Write(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_MODE, 1, 0x00, 1, HAL_MAX_DELAY);
+  if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_ADDR_READ, 5, HAL_MAX_DELAY) == HAL_OK)
+    {
+      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
+      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_MODE, 1, &MODE_config, 1, HAL_MAX_DELAY);
+    } 
 
   uint8_t X_out_raw[2], Y_out_raw[2], Z_out_raw[2];
   uint16_t X_out_full, Y_out_full, Z_out_full = 0;
@@ -206,6 +209,9 @@ int main(void)
   uint8_t HMC_STATE = 0;
 
   // HAL_Delay(650);
+
+    hmc_t compass;
+    HMC5883L_Init();
 
   while (1)
   {
@@ -299,25 +305,36 @@ int main(void)
 
   #if READ_HMC5883L_BUSSOLA
 
+    HMC_Make_Measurement_4_Single();
+    HAL_Delay(6);
+    HMC_Read_All(&compass);
+    HAL_Delay(1000);
+
+    // if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_DEVICE_ADDR, 5, HAL_MAX_DELAY) == HAL_OK)
+    // {
     // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_STATUS, 1, &HMC_STATE, 1, HAL_MAX_DELAY);
 
     // if (HMC_STATE == HMC5883L_READY_STATE)
     // {
-      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAX_MSB_MULTI, 1, &X_out_raw, 2, HAL_MAX_DELAY);
-      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAY_MSB_MULTI, 1, &Y_out_raw, 2, HAL_MAX_DELAY);
-      HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAZ_MSB_MULTI, 1, &Z_out_raw, 2, HAL_MAX_DELAY);
+      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAX_MSB_MULTI, 1, &X_out_raw, 2, HAL_MAX_DELAY);
+      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAY_MSB_MULTI, 1, &Y_out_raw, 2, HAL_MAX_DELAY);
+      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAZ_MSB_MULTI, 1, &Z_out_raw, 2, HAL_MAX_DELAY);
 
       //HAL_I2C_Master_Receive(&hi2c1, HMC5883L_ADDR_READ, )
-      HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_OUT_X_MSB, 1, HAL_MAX_DELAY);
+      // HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_OUT_X_MSB, 1, HAL_MAX_DELAY);
 
-      X_out_full = ((X_out_raw[1] << 8) | X_out_raw[0])/660.f;
-      Y_out_full = ((Y_out_raw[1] << 8) | Y_out_raw[0])/660.f;
-      Z_out_full = ((Z_out_raw[1] << 8) | Z_out_raw[0])/660.f;  
+      // X_out_full = ((X_out_raw[1] << 8) | X_out_raw[0])/660.f;
+      // Y_out_full = ((Y_out_raw[1] << 8) | Y_out_raw[0])/660.f;
+      // Z_out_full = ((Z_out_raw[1] << 8) | Z_out_raw[0])/660.f;  
 
     //   X_out_full = ((X_out_raw[1] << 8) + X_out_raw[0])/660.f;
     //   Y_out_full = ((Y_out_raw[1] << 8) + Y_out_raw[0])/660.f;
     //   Z_out_full = ((Z_out_raw[1] << 8) + Z_out_raw[0])/660.f;  
     // }
+    // }
+    
+
+
     
 
     #endif

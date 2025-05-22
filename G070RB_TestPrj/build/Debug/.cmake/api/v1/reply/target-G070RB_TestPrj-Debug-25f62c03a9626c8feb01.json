@@ -33,7 +33,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 81,
+				"line" : 82,
 				"parent" : 0
 			},
 			{
@@ -103,6 +103,10 @@
 				{
 					"backtrace" : 3,
 					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/DrvGY_HMC5883L/Cfg"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/STM32G0xx_HAL_Driver/Inc"
 				},
 				{
 					"backtrace" : 2,
@@ -219,6 +223,10 @@
 				{
 					"backtrace" : 3,
 					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/DrvGY_HMC5883L/Cfg"
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/tmx37/Documents/Code/myDrone/G070RB_TestPrj/Drivers/STM32G0xx_HAL_Driver/Inc"
 				},
 				{
 					"backtrace" : 2,

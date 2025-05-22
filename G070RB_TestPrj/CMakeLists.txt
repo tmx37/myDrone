@@ -70,6 +70,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/STM32G0xx_HAL_Driver/Inc
 )
 
 # Add project symbols (macros)
