@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+//https://embeddedthere.com/getting-started-with-freertos-in-stm32-example-code-included/
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,8 +45,9 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
 
-osThreadId defaultTaskHandle;
-osThreadId helloWorkdHandle;
+osThreadId FlightControllHandle;
+osThreadId ReadSensors_GTPHandle;
+osThreadId ReadSensors_GADHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -53,7 +56,9 @@ osThreadId helloWorkdHandle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-void StartDefaultTask(void const * argument);
+void FlightControll_PID_func(void const * argument);
+void ReadSensors_GTP_func(void const * argument);
+void ReadSensor_GAD_func(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -118,12 +123,17 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */ 
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of FlightControll */
+  osThreadDef(FlightControll, FlightControll_PID_func, osPriorityHigh, 0, 128);
+  FlightControllHandle = osThreadCreate(osThread(FlightControll), NULL);
 
-  osThreadDef(HelloWord, HelloWorld_UART, osPriorityNormal, 0, 128);
-  helloWorkdHandle = osThreadCreate(osThread(HelloWord), NULL);
+  /* definition and creation of ReadSensors_GTP */
+  osThreadDef(ReadSensors_GTP, ReadSensors_GTP_func, osPriorityBelowNormal, 0, 128);
+  ReadSensors_GTPHandle = osThreadCreate(osThread(ReadSensors_GTP), NULL);
+
+  /* definition and creation of ReadSensors_GAD */
+  osThreadDef(ReadSensors_GAD, ReadSensor_GAD_func, osPriorityAboveNormal, 0, 128);
+  ReadSensors_GADHandle = osThreadCreate(osThread(ReadSensors_GAD), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -272,14 +282,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_FlightControll_PID_func */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the FlightControll thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+/* USER CODE END Header_FlightControll_PID_func */
+void FlightControll_PID_func(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
@@ -290,6 +300,63 @@ void StartDefaultTask(void const * argument)
     osDelay(100);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_ReadSensors_GTP_func */
+/**
+* @brief Function implementing the ReadSensors_GTP thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_ReadSensors_GTP_func */
+void ReadSensors_GTP_func(void const * argument)
+{
+  /* USER CODE BEGIN ReadSensors_GTP_func */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END ReadSensors_GTP_func */
+}
+
+/* USER CODE BEGIN Header_ReadSensor_GAD_func */
+/**
+* @brief Function implementing the ReadSensors_GAD thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_ReadSensor_GAD_func */
+void ReadSensor_GAD_func(void const * argument)
+{
+  /* USER CODE BEGIN ReadSensor_GAD_func */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END ReadSensor_GAD_func */
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
 
 /**
