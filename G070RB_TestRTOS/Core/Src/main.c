@@ -136,7 +136,8 @@ int main(void)
   ReadSensors_GADHandle = osThreadCreate(osThread(ReadSensors_GAD), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+
+
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
@@ -149,7 +150,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+      /*
+        NOTES:
+        - we should never get here 
+        - osKernelStart => scheduler
+      */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -296,7 +301,7 @@ void FlightControll_PID_func(void const * argument)
   for(;;)
   {
     // HAL_UART_Transmit(&huart2, "RTOS hello World!\r\n", strlen("RTOS hello World!\r\n"), HAL_MAX_DELAY);
-
+    
     osDelay(100);
   }
   /* USER CODE END 5 */

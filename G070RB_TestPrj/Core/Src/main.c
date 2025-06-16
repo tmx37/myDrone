@@ -37,6 +37,7 @@
 #define READ_BMP180 0
 #define READ_MPU60X0_BOLLA_TEST 0
 #define READ_HMC5883L_BUSSOLA 0 
+#define PWM_BRUSHLESS_CONTROL 1
 
 #define HMC5883L_DEVICE_ADDR 0x1E
 
@@ -371,6 +372,7 @@ int main(void)
 
     #endif
 
+  #if PWM_BRUSHLESS_CONTROL
     /*
       TODO ESC:
         - verificare codice errori
@@ -428,13 +430,48 @@ int main(void)
               #10...Factory Reset........."B-----B-----"
               #11...Exit.................."B-----B-----B-"
           * Select parameter values
+            > Motor bips circularly: put high value when the sound with the corresponding value is met. Then, a sound will be reproduced and the ESC will retun to Paremeter items selection.
+
+                |    B1    |    B2    |    B3    |    B4    |    B5    |
+              ----------------------------------------------------------
+              #1| Disabled |  Normal  |  Reverse |Linear Rev|          |
+
+              #2|   Low    |  Medium  |   High   |          |          | 
+              
+              #3|   Soft   |   Hard   |          |          |          |
+              
+              #4| AutoCalc |    2S    |    3S    |          |          |
+                |          |    3S    |    4S    |    5S    |    6S    |
+              
+              #5| Disabled |   Low    |  Medium  |   High   |          |
+              
+              #6|  Normal  |   Soft   | Very Soft|          |          |
+              
+              #7|   Low    |  Medium  |   High   |          |          |
+              
+              #8|   On     |   Off    |          |          |          |
+              
+              #9|   Off    |   5min   |   10min  |   15min  |          |
+
           * Exit programming mode
+            > Bring PWM value to bottom withing 3 seconds after Two Long and one short beeps
     */
 
+    // Waiting startup procedure to end 
+    // TODO: make an external fw with buttons driver to make esc configuration easy
     HAL_Delay(2500);
     HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
 
-    HAL_UART_Transmit(&huart2, "Going up..", strlen("Going up.."), HAL_MAX_DELAY);
+    // 65530 - 45880 = 19650;
+    // x : 19650 = 1 : 100;
+    // value = 45880 + x -> pwm speed
+
+    // TIM1->CCR1 = 50*(19650/100) + 45880;
+
+    uint8_t pwm_percent = 0;
+    TIM1->CCR1 = (pwm_percent * 196) + 45880;
+
+    HAL_UART_Transmit(&huart2, "Going up..",  strlen("Going up.."), HAL_MAX_DELAY);
     for(int i=45880; i<64879; i+=50) // from 70% (~45880) to 100% (~65530)
     {
       TIM1->CCR1 = i;
@@ -450,6 +487,7 @@ int main(void)
       TIM1->CCR1 = i;
       HAL_Delay(5);
     }
+    #endif
 
     /* USER CODE END WHILE */
 
