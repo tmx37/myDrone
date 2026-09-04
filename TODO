@@ -1,6 +1,5 @@
 # Setup repository progetto
 - [ ] git submodules per ogni driver
-- [ ] progetto di test non RTOS basato su G070RB, successivamente espandere a RTOS etc
 - [ ] 
 
 # Analisi/studio
@@ -14,4 +13,4 @@
 - Scrittura modulo controllo ESP
 - layer di comunicazione univoco
 - Modulo applicativo "FlightControl"
-- 
+- Modulo sensore GPS
