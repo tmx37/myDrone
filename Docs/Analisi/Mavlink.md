@@ -1,0 +1,1 @@
+TODO: recuperare infomazioni e studio su stack di comunicazione Mavlink

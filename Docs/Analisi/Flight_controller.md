@@ -1,0 +1,1 @@
+TODO: Riferirsi agli studi fatti precedentemente sull'uso di sistemi PID innestati per il mantenimento angolo stabile in volo.
