@@ -1,0 +1,9 @@
+[submodule "G070RB_TestPrj/Drivers/drv-bmp180-gy85"]
+	path = G070RB_TestPrj/Drivers/drv-bmp180-gy85
+	url = git@github.com:tmx37/drv-bmp180-gy85.git
+[submodule "G070RB_TestPrj/Drivers/drv-hmc5883l-gy85"]
+	path = G070RB_TestPrj/Drivers/drv-hmc5883l-gy85
+	url = git@github.com:tmx37/drv-hmc5883l-gy85.git
+[submodule "G070RB_TestPrj/Drivers/drv-mpu60x0-gy85"]
+	path = G070RB_TestPrj/Drivers/drv-mpu60x0-gy85
+	url = git@github.com:tmx37/drv-mpu60x0-gy85.git
