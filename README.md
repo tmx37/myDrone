@@ -2,8 +2,23 @@
 STM32 + Raspberry Pi0 2W based drone
 
 ## Project modules
-Per aggiornare i submolues
-`git submodule update --remote --recursive`
+I moduli esterni sono submodule Git. Per scaricarli dopo un clone:
+
+```sh
+git submodule update --init --recursive
+```
+
+In alternativa, è possibile scaricarli direttamente durante il clone:
+
+```sh
+git clone --recurse-submodules https://github.com/tmx37/myDrone.git
+```
+
+Per aggiornare i submodule alla revisione remota più recente:
+
+```sh
+git submodule update --remote --recursive
+```
 
 # Struttura progetto:
 - Architettura classica STM32

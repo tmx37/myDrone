@@ -51,16 +51,12 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src
     ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src/DrvESC_PWM.c
     ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg/DrvESC_PWM_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src/DrvGY_BMP180.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg/DrvGY_BMP180_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src/DrvGY_MPU60X0.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg/DrvGY_MPU60X0_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/DrvGY_HMC5883L.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg/DrvGY_HMC5883L_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/HMC5883L.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-bmp180-gy85/Src/DrvGY_BMP180.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-bmp180-gy85/Cfg/DrvGY_BMP180_Cfg.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-mpu60x0-gy85/Src/DrvGY_MPU60X0.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-mpu60x0-gy85/Cfg/DrvGY_MPU60X0_Cfg.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-hmc5883l-gy85/Src/DrvGY_HMC5883L.c
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-hmc5883l-gy85/Cfg/DrvGY_HMC5883L_Cfg.c
     ${CMAKE_SOURCE_DIR}/Core/Src/DrvI2c.c
 )
 
@@ -70,12 +66,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/Core/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-bmp180-gy85/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-bmp180-gy85/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-mpu60x0-gy85/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-mpu60x0-gy85/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-hmc5883l-gy85/Inc
+    ${CMAKE_SOURCE_DIR}/Drivers/drv-hmc5883l-gy85/Cfg
     ${CMAKE_SOURCE_DIR}/Drivers/STM32G0xx_HAL_Driver/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32G0xx/Include
 )
