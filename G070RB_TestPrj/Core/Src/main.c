@@ -26,7 +26,7 @@
 #include "DrvGY_MPU60X0.h"
 //#include "DrvGY_MPU60X0.h"
 
-#include "HMC5883L.h"
+#include "DrvGY_HMC5883L.h"
 
 /* USER CODE END Includes */
 
