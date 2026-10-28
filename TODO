@@ -1,6 +1,7 @@
 # Setup repository progetto
-- [ ] git submodules per ogni driver
-- [ ] 
+- [ ] Rimuovere tutto il fw di test dal main e portare sui drivers.
+- [ ] Aggiungere configurazioni 
+- [ ] Aggiungere layer "app" di test (unificare e attivare in base a cofigurazione -> posso scegliere che moduli attivare in debug configurando il file unico dell'app di test in cui sono inclusi tutti i moduli)
 
 # Analisi/studio
 - Standard struttura fw
