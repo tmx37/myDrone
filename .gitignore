@@ -1,5 +1,7 @@
 # Custom
 G070RB_TestPrj/Drivers
+G070RB_TestPrj/build
+.vscode/*
 
 # Object files
 *.o
