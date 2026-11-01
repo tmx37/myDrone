@@ -24,8 +24,6 @@
 
 #include "DrvGY_BMP180.h"
 #include "DrvGY_MPU60X0.h"
-//#include "DrvGY_MPU60X0.h"
-
 #include "DrvGY_HMC5883L.h"
 
 /* USER CODE END Includes */
@@ -33,38 +31,11 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define READ_MPU60X0_GYRO_ACCEL 0
 #define READ_BMP180 0
+#define READ_MPU60X0_GYRO_ACCEL 0
 #define READ_MPU60X0_BOLLA_TEST 0
 #define READ_HMC5883L_BUSSOLA 0 
 #define PWM_BRUSHLESS_CONTROL 1
-
-#define HMC5883L_DEVICE_ADDR 0x1E
-
-#define HMC5883L_ADDR_READ 0x3D
-#define HMC5883L_ADDR_WRITE 0x3C
-
-#define HMC5883L_CONFIG_A 0X00
-#define HMC5883L_CONFIG_B 0X01
-#define HMC5883L_MODE 0X02
-#define HMC5883L_OUT_X_MSB 0X03
-#define HMC5883L_OUT_X_LSB 0X04
-#define HMC5883L_OUT_Z_MSB 0X05
-#define HMC5883L_OUT_Z_LSB 0X06
-#define HMC5883L_OUT_Y_MSB 0X07
-#define HMC5883L_OUT_Y_LSB 0X08
-#define HMC5883L_STATUS 0X09
-#define HMC5883L_ID_A 0X0A
-#define HMC5883L_ID_B 0X0B
-#define HMC5883L_ID_C 0X0C
-
-// #define HMC5883l_ADD_DATAX_MSB_MULTI (HMC5883L_OUT_X_MSB | 0x80)
-// #define HMC5883l_ADD_DATAY_MSB_MULTI (HMC5883L_OUT_Y_MSB | 0x80)
-// #define HMC5883l_ADD_DATAZ_MSB_MULTI (HMC5883L_OUT_Z_MSB | 0x80)
-
-#define HMC5883L_READY_STATE 0x01
-#define HMC5883L_LOCK_STATE 0x02
-
 
 /* USER CODE END PTD */
 
@@ -365,128 +336,10 @@ int main(void)
     //   Z_out_full = ((Z_out_raw[1] << 8) + Z_out_raw[0])/660.f;  
     // }
     // }
-    
-
-
-    
-
     #endif
 
   #if PWM_BRUSHLESS_CONTROL
-    /*
-      TODO ESC:
-        - verificare codice errori
-        - verificare 
-        - Includere un controllo di alimentazione per controllare l'alimentazione dei motori da lipo, direttamente su scheda, per permettere agli altri componenti di 
-          continuare a funzionare per operazioni di programmazione, setting, debug, segnalazione da remoto con risparmio energetico e via così.. Aggiungere anche bypass 
-          fisico sul circuito
-    */
 
-    /*
-      NOTE ESC rev-eng:
-        - appena data tensione "principale" (dalla lipo) all'ESC, questo necessiterà di una "Startup routine" (da confrontare con il manuale) per effettuare 
-          delle specie di controlli (presumo di configurazione iniziale): passa se faccio andare il pwm da 0 a 45880 (~70% circa del pwm)
-        - motore a velocità "0" a circa 70% del PWM: ~45880
-        - motore a velocità "100" a circa 99% del PWM: ~64879 
-        - ESC ha una sorta di protezione contro l'eccessivo consumo da parte del motore (es: elica bloccata), per evitare consumi troppo elevati
-        - ESC genera errore se, appena data alimentazione, non viene fatto un ciclo da 0 a regime (probabile startup routine), forse per evitare comandi troppo "bruschi"
-        - ESC rileva numero di celle dell'alimentazione, nello specifico se 3 o 4 celle (testato)
-
-        - ESC CALIBRATION:
-          * Set PWM to MAX ;
-          * Plug in battery, Motor will play "1 2 3" sound to indicate ESC is normally powered on;
-          * Motor will sound 2 short times to indicate max throttle endpoint is accepted;
-          * Set PWM to MIN, within 5 seconds after the two short beeps: the minimum throttle position will be accepted 1 second later;
-          * Motor will beep "Number" beeps to indicate the number of LiPo cells you have plugged in;
-          * Motor will beep a long beep to indicate calibration is complete.
-        
-        - ESC NORMAL START-UP PROCESS:
-          * Set PWM to MIN;
-          * Plug in battery, Motor will play "1 2 3" sound to indicate ESC is normally powered on;
-          * Motor will beep "Number" beeps to indicate the number of LiPo cells you have plugged in;
-          * Motor will beep a long beep to indicate ESC is ready to go.
-        
-        - PROGRAM ESC WITH THE TRANSMITTER:
-          * Enter programming mode
-            > Turn on transmitter
-            > Move throttle stick to top position
-            > Plug in battery
-            > 2 seconds later motor will beep 2 short times
-            > 5 seconds later it will beep again 
-            > You will be in programming mode
-
-          * Select parameter items
-            > 12 distinct beeps play circularly;
-            > set PWM to MIN within 3 seconds after the right sound, you will enter the corresponding parameter item;
-              #1....Brake Type............"B-"
-              #2....Brake Force..........."B-B-"
-              #3....Voltage Cutoff Type..."B-B-B-"
-              #4....LiPo Cells............"B-B-B-B-"
-              #5....Cutoff Voltage........"B-----"
-              #6....Start-up Mode........."B-----B-"
-              #7....Timing................"B-----B-B-"
-              #8....Active Freewheeling..."B-----B-B-B-"
-              #9....Search Mode..........."B-----B-B-B-B-"
-              #10...Factory Reset........."B-----B-----"
-              #11...Exit.................."B-----B-----B-"
-          * Select parameter values
-            > Motor bips circularly: put high value when the sound with the corresponding value is met. Then, a sound will be reproduced and the ESC will retun to Paremeter items selection.
-
-                |    B1    |    B2    |    B3    |    B4    |    B5    |
-              ----------------------------------------------------------
-              #1| Disabled |  Normal  |  Reverse |Linear Rev|          |
-
-              #2|   Low    |  Medium  |   High   |          |          | 
-              
-              #3|   Soft   |   Hard   |          |          |          |
-              
-              #4| AutoCalc |    2S    |    3S    |          |          |
-                |          |    3S    |    4S    |    5S    |    6S    |
-              
-              #5| Disabled |   Low    |  Medium  |   High   |          |
-              
-              #6|  Normal  |   Soft   | Very Soft|          |          |
-              
-              #7|   Low    |  Medium  |   High   |          |          |
-              
-              #8|   On     |   Off    |          |          |          |
-              
-              #9|   Off    |   5min   |   10min  |   15min  |          |
-
-          * Exit programming mode
-            > Bring PWM value to bottom withing 3 seconds after Two Long and one short beeps
-    */
-
-    // Waiting startup procedure to end 
-    // TODO: make an external fw with buttons driver to make esc configuration easy
-    HAL_Delay(2500);
-    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
-
-    // 65530 - 45880 = 19650;
-    // x : 19650 = 1 : 100;
-    // value = 45880 + x -> pwm speed
-
-    // TIM1->CCR1 = 50*(19650/100) + 45880;
-
-    uint8_t pwm_percent = 0;
-    TIM1->CCR1 = (pwm_percent * 196) + 45880;
-
-    HAL_UART_Transmit(&huart2, "Going up..",  strlen("Going up.."), HAL_MAX_DELAY);
-    for(int i=45880; i<64879; i+=50) // from 70% (~45880) to 100% (~65530)
-    {
-      TIM1->CCR1 = i;
-      HAL_Delay(5);
-    }
-
-    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
-    HAL_Delay(2500);
-
-    HAL_UART_Transmit(&huart2, "Going down..", strlen("Going down.."), HAL_MAX_DELAY);
-    for(int i=64879; i>45880; i-=50) // from 100% (~65530) to 70% (~45880) 
-    {
-      TIM1->CCR1 = i;
-      HAL_Delay(5);
-    }
     #endif
 
     /* USER CODE END WHILE */

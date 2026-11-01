@@ -2,7 +2,7 @@
 #include <string.h>
 #include "main.h"
 
-// TODO: move this to .h
+// TODO: REMOVE THIS AND USE HW REATED CALLBACKS INSTEAD.s
 //extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c1;
 
