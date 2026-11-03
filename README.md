@@ -24,7 +24,7 @@ Struttura classica di un progetto STM32CubeMX:
 
 - `G070RB_TestPrj/`: progetto di test per STM32G070RB (configurazione in `G070RB_TestPrj.ioc`)
     - `Core/`: codice applicativo e generato da CubeMX (`main.c`, interrupt, wrapper I2C)
-    - `Drivers/`: HAL STM32G0xx, CMSIS e driver di accesso diretto all'HW (submodule `drv-*`)
+    - `Drivers/`: HAL STM32G0xx, CMSIS e driver di accesso diretto all'HW (repo `drv_*` gestiti da west)
 - `Docs/`: datasheet dei sensori e documenti di analisi dell'architettura
 - todo: definire cartella apps
 - todo: definire cartella stack_x
