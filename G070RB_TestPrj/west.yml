@@ -1,0 +1,33 @@
+manifest:
+  remotes:
+    - name: tmx37_github
+      url-base: git@github.com:tmx37
+
+  projects:
+
+    - name: Drv_HwskywalkerEsc
+      remote: tmx37_github
+      repo-path: drv_hwskywalker_esc
+      revision: develop
+      path: G070RB_TestPrj/Drivers/drv_hwskywalker_esc
+
+    - name: Drv_Hmc5883l
+      remote: tmx37_github
+      repo-path: drv_hmc5883l
+      revision: develop
+      path: G070RB_TestPrj/Drivers/drv_hmc5883l
+
+    - name: Drv_Mpu60x0
+      remote: tmx37_github
+      repo-path: drv_mpu60x0
+      revision: develop
+      path: G070RB_TestPrj/Drivers/drv_mpu60x0
+
+    - name: Drv_Bmp180
+      remote: tmx37_github
+      repo-path: drv_bmp180
+      revision: develop
+      path: G070RB_TestPrj/Drivers/drv_bmp180
+ 
+self: 
+  path: G070RB_TestPrj/Drivers

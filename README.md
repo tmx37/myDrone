@@ -17,23 +17,7 @@ Fa parte dell'architettura complessiva del drone:
     - Controlli e dati
 
 ## Moduli del progetto
-I driver dei sensori sono submodule Git. Per scaricarli dopo un clone:
-
-```sh
-git submodule update --init --recursive
-```
-
-In alternativa, è possibile scaricarli direttamente durante il clone:
-
-```sh
-git clone --recurse-submodules https://github.com/tmx37/myDrone.git
-```
-
-Per aggiornare i submodule alla revisione remota più recente:
-
-```sh
-git submodule update --remote --recursive
-```
+La gestione multi-repo è gestita tramite `west`.
 
 ## Struttura progetto
 Struttura classica di un progetto STM32CubeMX:
