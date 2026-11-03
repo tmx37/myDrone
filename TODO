@@ -1,10 +1,7 @@
 # Setup repository progetto
-- [ ] Rimuovere tutto il fw di test dal main e portare sui drivers (soprattutto configurazione pwm).
-- [ ] Aggiungere configurazioni 
-- [ ] Aggiungere layer "app" di test (unificare e attivare in base a cofigurazione -> posso scegliere che moduli attivare in debug configurando il file unico dell'app di test in cui sono inclusi tutti i moduli)
-- [ ] Rimuovere DrvI2C e portare tutto in configurazione
-- [ ] Rinominare Drivers sulla base del chip in uso, GY85 sta per la board su cui sono montati, quindi farci riferimento unicamente sulle cofngiurazioni
-- [ ] Collegare le configurazioni correttamente con le implementazioni, e spostarci le callback relative all'HW
+- [ ] Sistemare logica drivers
+- [ ] Sistemare logica configurazioni (callbacks per funzioni hw related) 
+- [ ] Implementare sistema di invio messaggi per app di test
 
 # Analisi/studio
 - Standard struttura fw
