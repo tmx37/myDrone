@@ -47,35 +47,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Src/DrvESC_PWM.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg/DrvESC_PWM_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Src/DrvGY_BMP180.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg/DrvGY_BMP180_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Src/DrvGY_MPU60X0.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg/DrvGY_MPU60X0_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/DrvGY_HMC5883L.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg/DrvGY_HMC5883L_Cfg.c
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Src/HMC5883L.c
-    ${CMAKE_SOURCE_DIR}/Core/Src/DrvI2c.c
+    # All user defined sources
+    ${CMAKE_SOURCE_DIR}/Drivers/*/*/*.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Core/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvESC_PWM/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_BMP180/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_MPU60X0/Cfg
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/DrvGY_HMC5883L/Cfg
+    ${CMAKE_SOURCE_DIR}/Drivers/*/*
     ${CMAKE_SOURCE_DIR}/Drivers/STM32G0xx_HAL_Driver/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32G0xx/Include
 )

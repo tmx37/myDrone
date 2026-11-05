@@ -22,49 +22,25 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "DrvGY_BMP180.h"
-#include "DrvGY_MPU60X0.h"
-//#include "DrvGY_MPU60X0.h"
-
-#include "HMC5883L.h"
+#include "TestSuite.h"
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define READ_MPU60X0_GYRO_ACCEL 0
+#pragma region "Tests"
+
 #define READ_BMP180 0
+
+#define READ_MPU60X0_GYRO_ACCEL 0
 #define READ_MPU60X0_BOLLA_TEST 0
+
 #define READ_HMC5883L_BUSSOLA 0 
+
 #define PWM_BRUSHLESS_CONTROL 1
 
-#define HMC5883L_DEVICE_ADDR 0x1E
-
-#define HMC5883L_ADDR_READ 0x3D
-#define HMC5883L_ADDR_WRITE 0x3C
-
-#define HMC5883L_CONFIG_A 0X00
-#define HMC5883L_CONFIG_B 0X01
-#define HMC5883L_MODE 0X02
-#define HMC5883L_OUT_X_MSB 0X03
-#define HMC5883L_OUT_X_LSB 0X04
-#define HMC5883L_OUT_Z_MSB 0X05
-#define HMC5883L_OUT_Z_LSB 0X06
-#define HMC5883L_OUT_Y_MSB 0X07
-#define HMC5883L_OUT_Y_LSB 0X08
-#define HMC5883L_STATUS 0X09
-#define HMC5883L_ID_A 0X0A
-#define HMC5883L_ID_B 0X0B
-#define HMC5883L_ID_C 0X0C
-
-// #define HMC5883l_ADD_DATAX_MSB_MULTI (HMC5883L_OUT_X_MSB | 0x80)
-// #define HMC5883l_ADD_DATAY_MSB_MULTI (HMC5883L_OUT_Y_MSB | 0x80)
-// #define HMC5883l_ADD_DATAZ_MSB_MULTI (HMC5883L_OUT_Z_MSB | 0x80)
-
-#define HMC5883L_READY_STATE 0x01
-#define HMC5883L_LOCK_STATE 0x02
-
+#pragma endregion
 
 /* USER CODE END PTD */
 
@@ -114,8 +90,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-   int32_t CH1_DC = 0;
-
   
   /* USER CODE END 1 */
 
@@ -142,352 +116,31 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   
-  #if READ_BMP180
-  if(DrvGYBMP180Cfg_Init() != UTLGEN_OK)
-	  HAL_UART_Transmit(&huart2, "Can't start BMP180 driver!", strlen("Can't start BMP180 driver!"), 1000);
-  #endif
-  
-  #if READ_MPU60X0_GYRO_ACCEL
-  if (DrvMPU60X0Cfg_Init() != UTLGEN_OK)
-  	  HAL_UART_Transmit(&huart2, "Can't start MPU60X0 driver!", strlen("Can't start MPU60X0 driver!"), 1000);
-  #endif
-
-  #if READ_HMC5883L_BUSSOLA
-  if (DrvHMC5883LCfg_Init() != UTLGEN_OK)
-  	  HAL_UART_Transmit(&huart2, "Can't start HMC5883L driver!", strlen("Can't start HMC5883L driver!"), 1000);
-  #endif
+  TestSuite_Init();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-#pragma region "PORCODIO"
 
-  const uint8_t* line_0 = " ";
-  const uint8_t* new_line = "\r\n";
-
-  const uint8_t* line_1 = "Raw_Pres: ";
-  const uint8_t* line_2 = "Pressione: ";
-  const uint8_t* line_3 = "[Pa] ";
-
-  const uint8_t* line_4 = "| Altitude: ";
-  const uint8_t* line_5 = "[m] ";
-
-  const uint8_t* line_6 = "| Temperatura: ";
-  const uint8_t* line_7 = " -> ";
-  const uint8_t* line_8 = "[C]";
-
-  const uint8_t* GY_X = "GY_X: ";
-  const uint8_t* GY_Y = "GY_Y: ";
-  const uint8_t* GY_Z = "GY_Z: ";
-
-  const uint8_t* ACC_X = "ACC_X: ";
-  const uint8_t* ACC_Y = "ACC_Y: ";
-  const uint8_t* ACC_Z = "ACC_Z: ";
-
-  char output_sting_final_temp[20];
-  char output_sting_final_pres[20];
-  char output_sting_altitude[20];
-
-  char output_sting_final_gx[20];
-  char output_sting_final_gy[20];
-  char output_sting_final_gz[20];
-
-  char output_sting_final_ax[20];
-  char output_sting_final_ay[20];
-  char output_sting_final_az[20];
-
-  char output_sting_final_mx[20];
-  char output_sting_final_my[20];
-  char output_sting_final_mz[20];
-#pragma endregion
-
-  GY_Data_t GYOutputData;
-  ACC_Data_t ACCELOutputData;
   #if READ_HMC5883L_BUSSOLA
-
-
-  uint8_t CRA_config = 0x78;  // Configuration register A, defaults to 0x10 (00010000)
-  uint8_t CRB_config = 0xA0;  // Configuration register B, defaults to 0x20 (00100000)
-  uint8_t MODE_config = 0x00; // Selects measurement mode
-
-  if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_ADDR_READ, 5, HAL_MAX_DELAY) == HAL_OK)
-    {
-      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
-      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
-      HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_MODE, 1, &MODE_config, 1, HAL_MAX_DELAY);
-    } 
-
-  uint8_t X_out_raw[2], Y_out_raw[2], Z_out_raw[2];
-  uint16_t X_out_full, Y_out_full, Z_out_full = 0;
-
-  uint8_t HMC_STATE = 0;
-
-  // HAL_Delay(650);
-
-    hmc_t compass;
-    HMC5883L_Init();
-#endif
+  
+    
+  #endif
 
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   while (1)
   {
-  #if READ_BMP180
-    itoa(getTemperature(), output_sting_final_temp, 10);
-	  itoa(getPressure(), output_sting_final_pres, 10);
-	  itoa(getAltitude(), output_sting_altitude, 10);
+    /** Read tests */
+    TestSuite_Read_Hmc5883l();
+    TestSuite_Read_Bmp180();
+    TestSuite_Read_Mpu60x0();
 
-	  HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
-	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
-
-	  HAL_UART_Transmit(&huart2, line_4, strlen(line_4), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_altitude, strlen(output_sting_altitude), 1000);
-	  HAL_UART_Transmit(&huart2, line_5, strlen(line_5), 1000);
-
-	  HAL_UART_Transmit(&huart2, line_6, strlen(line_6), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_temp, strlen(output_sting_final_temp), 1000);
-	  HAL_UART_Transmit(&huart2, line_8, strlen(line_8), 1000);
-
-	  HAL_UART_Transmit(&huart2, (uint8_t*)new_line, strlen(new_line), 1000);
-
-    HAL_UART_Transmit(&huart2, line_2, strlen(line_2), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_pres, strlen(output_sting_final_pres), 1000);
-	  HAL_UART_Transmit(&huart2, line_3, strlen(line_3), 1000);
-
-  #endif
-    
-  #if READ_MPU60X0_GYRO_ACCEL
-    if(getGyro(&GYOutputData) == UTLGEN_OK)
-    {       
-      itoa(GYOutputData.XG, output_sting_final_gx, 10);
-      HAL_UART_Transmit(&huart2, GY_X, strlen(GY_X), 1000);
-      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gx, strlen(output_sting_final_gx), 1000);
-      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-
-      itoa(GYOutputData.YG, output_sting_final_gy, 10);
-      HAL_UART_Transmit(&huart2, GY_Y, strlen(GY_Y), 1000);
-      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gy, strlen(output_sting_final_gy), 1000);
-      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-      
-      itoa(GYOutputData.ZG, output_sting_final_gz, 10);
-      HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
-      HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_gz, strlen(output_sting_final_gz), 1000);
-      HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-    }
-    else
-    {
-        HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
-        HAL_UART_Transmit(&huart2, "Can't get GY!!!", strlen("Can't get GY!!!"), 1000);
-        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-    }
-    
-    if (getAccel(&ACCELOutputData) == UTLGEN_OK)
-    {
-        itoa(ACCELOutputData.XA, output_sting_final_ax, 10);
-        HAL_UART_Transmit(&huart2, ACC_X, strlen(ACC_X), 1000);
-        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_ax, strlen(output_sting_final_ax), 1000);
-        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-
-        itoa(ACCELOutputData.YA, output_sting_final_ay, 10);
-        HAL_UART_Transmit(&huart2, ACC_Y, strlen(ACC_Y), 1000);
-        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_ay, strlen(output_sting_final_ay), 1000);
-        HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
-      
-        itoa(ACCELOutputData.ZA, output_sting_final_az, 10);
-        HAL_UART_Transmit(&huart2, ACC_Z, strlen(ACC_Z), 1000);
-        HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_az, strlen(output_sting_final_az), 1000);
-        HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
-    }
-    else
-    {
-        HAL_UART_Transmit(&huart2, GY_Z, strlen(GY_Z), 1000);
-        HAL_UART_Transmit(&huart2, "Can't get ACCEL!!!", strlen("Can't get ACCEL!!!"), 1000);
-        HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
-    }
-
-    #endif
-
-  #if READ_MPU60X0_BOLLA_TEST
-    bool test_bolla;
-    isDeviceOnPlainSurface(&test_bolla);
-    HAL_UART_Transmit(&huart2, "Is the device in bolla? ", strlen("Is the device in bolla? "), 1000);
-    if (test_bolla)
-        HAL_UART_Transmit(&huart2, "CIANO XE IN BOLLA!", strlen("CIANO XE IN BOLLA!"), 1000);
-    else
-        HAL_UART_Transmit(&huart2, "NO A XE IN BOLLA..", strlen("NO A XE IN BOLLA.."), 1000);
-    HAL_UART_Transmit(&huart2, new_line, strlen(new_line), 1000);
-    
-    #endif
-
-  #if READ_HMC5883L_BUSSOLA
-
-    HMC_Make_Measurement_4_Single();
-    HAL_Delay(6);
-    HMC_Read_All(&compass);
-    HAL_Delay(1000);
-
-    itoa(compass.compass_x, output_sting_final_mx, 10);
-    itoa(compass.compass_y, output_sting_final_my, 10);
-    itoa(compass.compass_z, output_sting_final_mz, 10);
-
-    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_mx, strlen(output_sting_final_mx), HAL_MAX_DELAY);
-    HAL_UART_Transmit(&huart2, " ", strlen(" "), HAL_MAX_DELAY);
-    
-    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_my, strlen(output_sting_final_my), HAL_MAX_DELAY);
-    HAL_UART_Transmit(&huart2, " ", strlen(" "), HAL_MAX_DELAY);
-    
-    HAL_UART_Transmit(&huart2, (uint8_t*)output_sting_final_mz, strlen(output_sting_final_mz), HAL_MAX_DELAY);
-    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
-
-    // if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_DEVICE_ADDR, 5, HAL_MAX_DELAY) == HAL_OK)
-    // {
-    // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_STATUS, 1, &HMC_STATE, 1, HAL_MAX_DELAY);
-
-    // if (HMC_STATE == HMC5883L_READY_STATE)
-    // {
-      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAX_MSB_MULTI, 1, &X_out_raw, 2, HAL_MAX_DELAY);
-      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAY_MSB_MULTI, 1, &Y_out_raw, 2, HAL_MAX_DELAY);
-      // HAL_I2C_Mem_Read(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883l_ADD_DATAZ_MSB_MULTI, 1, &Z_out_raw, 2, HAL_MAX_DELAY);
-
-      //HAL_I2C_Master_Receive(&hi2c1, HMC5883L_ADDR_READ, )
-      // HAL_I2C_Master_Transmit(&hi2c1, HMC5883L_ADDR_WRITE, HMC5883L_OUT_X_MSB, 1, HAL_MAX_DELAY);
-
-      // X_out_full = ((X_out_raw[1] << 8) | X_out_raw[0])/660.f;
-      // Y_out_full = ((Y_out_raw[1] << 8) | Y_out_raw[0])/660.f;
-      // Z_out_full = ((Z_out_raw[1] << 8) | Z_out_raw[0])/660.f;  
-
-    //   X_out_full = ((X_out_raw[1] << 8) + X_out_raw[0])/660.f;
-    //   Y_out_full = ((Y_out_raw[1] << 8) + Y_out_raw[0])/660.f;
-    //   Z_out_full = ((Z_out_raw[1] << 8) + Z_out_raw[0])/660.f;  
-    // }
-    // }
-    
-
-
-    
-
-    #endif
-
-  #if PWM_BRUSHLESS_CONTROL
-    /*
-      TODO ESC:
-        - verificare codice errori
-        - verificare 
-        - Includere un controllo di alimentazione per controllare l'alimentazione dei motori da lipo, direttamente su scheda, per permettere agli altri componenti di 
-          continuare a funzionare per operazioni di programmazione, setting, debug, segnalazione da remoto con risparmio energetico e via così.. Aggiungere anche bypass 
-          fisico sul circuito
-    */
-
-    /*
-      NOTE ESC rev-eng:
-        - appena data tensione "principale" (dalla lipo) all'ESC, questo necessiterà di una "Startup routine" (da confrontare con il manuale) per effettuare 
-          delle specie di controlli (presumo di configurazione iniziale): passa se faccio andare il pwm da 0 a 45880 (~70% circa del pwm)
-        - motore a velocità "0" a circa 70% del PWM: ~45880
-        - motore a velocità "100" a circa 99% del PWM: ~64879 
-        - ESC ha una sorta di protezione contro l'eccessivo consumo da parte del motore (es: elica bloccata), per evitare consumi troppo elevati
-        - ESC genera errore se, appena data alimentazione, non viene fatto un ciclo da 0 a regime (probabile startup routine), forse per evitare comandi troppo "bruschi"
-        - ESC rileva numero di celle dell'alimentazione, nello specifico se 3 o 4 celle (testato)
-
-        - ESC CALIBRATION:
-          * Set PWM to MAX ;
-          * Plug in battery, Motor will play "1 2 3" sound to indicate ESC is normally powered on;
-          * Motor will sound 2 short times to indicate max throttle endpoint is accepted;
-          * Set PWM to MIN, within 5 seconds after the two short beeps: the minimum throttle position will be accepted 1 second later;
-          * Motor will beep "Number" beeps to indicate the number of LiPo cells you have plugged in;
-          * Motor will beep a long beep to indicate calibration is complete.
-        
-        - ESC NORMAL START-UP PROCESS:
-          * Set PWM to MIN;
-          * Plug in battery, Motor will play "1 2 3" sound to indicate ESC is normally powered on;
-          * Motor will beep "Number" beeps to indicate the number of LiPo cells you have plugged in;
-          * Motor will beep a long beep to indicate ESC is ready to go.
-        
-        - PROGRAM ESC WITH THE TRANSMITTER:
-          * Enter programming mode
-            > Turn on transmitter
-            > Move throttle stick to top position
-            > Plug in battery
-            > 2 seconds later motor will beep 2 short times
-            > 5 seconds later it will beep again 
-            > You will be in programming mode
-
-          * Select parameter items
-            > 12 distinct beeps play circularly;
-            > set PWM to MIN within 3 seconds after the right sound, you will enter the corresponding parameter item;
-              #1....Brake Type............"B-"
-              #2....Brake Force..........."B-B-"
-              #3....Voltage Cutoff Type..."B-B-B-"
-              #4....LiPo Cells............"B-B-B-B-"
-              #5....Cutoff Voltage........"B-----"
-              #6....Start-up Mode........."B-----B-"
-              #7....Timing................"B-----B-B-"
-              #8....Active Freewheeling..."B-----B-B-B-"
-              #9....Search Mode..........."B-----B-B-B-B-"
-              #10...Factory Reset........."B-----B-----"
-              #11...Exit.................."B-----B-----B-"
-          * Select parameter values
-            > Motor bips circularly: put high value when the sound with the corresponding value is met. Then, a sound will be reproduced and the ESC will retun to Paremeter items selection.
-
-                |    B1    |    B2    |    B3    |    B4    |    B5    |
-              ----------------------------------------------------------
-              #1| Disabled |  Normal  |  Reverse |Linear Rev|          |
-
-              #2|   Low    |  Medium  |   High   |          |          | 
-              
-              #3|   Soft   |   Hard   |          |          |          |
-              
-              #4| AutoCalc |    2S    |    3S    |          |          |
-                |          |    3S    |    4S    |    5S    |    6S    |
-              
-              #5| Disabled |   Low    |  Medium  |   High   |          |
-              
-              #6|  Normal  |   Soft   | Very Soft|          |          |
-              
-              #7|   Low    |  Medium  |   High   |          |          |
-              
-              #8|   On     |   Off    |          |          |          |
-              
-              #9|   Off    |   5min   |   10min  |   15min  |          |
-
-          * Exit programming mode
-            > Bring PWM value to bottom withing 3 seconds after Two Long and one short beeps
-    */
-
-    // Waiting startup procedure to end 
-    // TODO: make an external fw with buttons driver to make esc configuration easy
-    HAL_Delay(2500);
-    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
-
-    // 65530 - 45880 = 19650;
-    // x : 19650 = 1 : 100;
-    // value = 45880 + x -> pwm speed
-
-    // TIM1->CCR1 = 50*(19650/100) + 45880;
-
-    uint8_t pwm_percent = 0;
-    TIM1->CCR1 = (pwm_percent * 196) + 45880;
-
-    HAL_UART_Transmit(&huart2, "Going up..",  strlen("Going up.."), HAL_MAX_DELAY);
-    for(int i=45880; i<64879; i+=50) // from 70% (~45880) to 100% (~65530)
-    {
-      TIM1->CCR1 = i;
-      HAL_Delay(5);
-    }
-
-    HAL_UART_Transmit(&huart2, "\r\n", strlen("\r\n"), HAL_MAX_DELAY);
-    HAL_Delay(2500);
-
-    HAL_UART_Transmit(&huart2, "Going down..", strlen("Going down.."), HAL_MAX_DELAY);
-    for(int i=64879; i>45880; i-=50) // from 100% (~65530) to 70% (~45880) 
-    {
-      TIM1->CCR1 = i;
-      HAL_Delay(5);
-    }
-    #endif
+    /** Basic application tests */
+    TestSuite_AppBolla_Mpu60x0();
+    TestSuite_AppBussola_Hmc5883l();
 
     /* USER CODE END WHILE */
 
