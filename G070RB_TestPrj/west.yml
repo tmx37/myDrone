@@ -28,6 +28,13 @@ manifest:
       repo-path: drv_bmp180
       revision: develop
       path: G070RB_TestPrj/Drivers/drv_bmp180
+
+    - name: GenUtl
+      remote: tmx37_github
+      repo-path: GenUtl_EmbeddedC
+      revision: develop
+      path: G070RB_TestPrj/Prj_Apps/GenUtl
+
  
 self: 
   path: G070RB_TestPrj/Drivers

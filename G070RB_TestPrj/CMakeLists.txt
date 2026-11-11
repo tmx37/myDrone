@@ -48,16 +48,19 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # All user defined sources
-    ${CMAKE_SOURCE_DIR}/Drivers/*/*/*.c
+    ${CMAKE_SOURCE_DIR}/Drivers
+    ${CMAKE_SOURCE_DIR}/Prj_Apps/GenUtl # verify if to put as module 
+    ${CMAKE_SOURCE_DIR}/Prj_Apps/TestSuite
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/Core/Inc
-    ${CMAKE_SOURCE_DIR}/Drivers/*/*
+    ${CMAKE_SOURCE_DIR}/Drivers
     ${CMAKE_SOURCE_DIR}/Drivers/STM32G0xx_HAL_Driver/Inc
     ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32G0xx/Include
+    ${CMAKE_SOURCE_DIR}/Prj_Apps
 )
 
 # Add project symbols (macros)
