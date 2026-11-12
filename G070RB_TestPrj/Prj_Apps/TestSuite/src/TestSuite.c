@@ -99,7 +99,7 @@ GenUtl_Err_t TestSuite_Read_Bmp180()
 
 GenUtl_Err_t TestSuite_Read_Mpu60x0()
 {
-    if(getGyro(&GYOutputData) == UTLGEN_OK)
+    if(getGyro(&GYOutputData) == OUT_OK)
     {       
         itoa(GYOutputData.XG, output_sting_final_gx, 10);
         HAL_UART_Transmit(&huart2, GY_X, strlen(GY_X), 1000);
@@ -123,7 +123,7 @@ GenUtl_Err_t TestSuite_Read_Mpu60x0()
         HAL_UART_Transmit(&huart2, line_0, strlen(line_0), 1000);
     }
     
-    if (getAccel(&ACCELOutputData) == UTLGEN_OK)
+    if (getAccel(&ACCELOutputData) == OUT_OK)
     {
         itoa(ACCELOutputData.XA, output_sting_final_ax, 10);
         HAL_UART_Transmit(&huart2, ACC_X, strlen(ACC_X), 1000);
