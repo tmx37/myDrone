@@ -1,5 +1,6 @@
+#include "main.h"
+
 #include "TestSuite.h"
-#include "stm32g0xx_hal.h"
 
 #include "Drv_HwSkyWalker_Esc.h"
 #include "Drv_BMP180.h"
