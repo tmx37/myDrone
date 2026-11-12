@@ -1,6 +1,7 @@
 # Setup repository progetto
-- [ ] git submodules per ogni driver
-- [ ] 
+- [ ] Sistemare logica drivers
+- [ ] Sistemare logica configurazioni (callbacks per funzioni hw related) 
+- [ ] Implementare sistema di invio messaggi per app di test
 
 # Analisi/studio
 - Standard struttura fw
