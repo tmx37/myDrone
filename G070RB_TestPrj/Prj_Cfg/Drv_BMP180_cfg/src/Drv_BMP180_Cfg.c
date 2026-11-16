@@ -10,8 +10,8 @@
  * Includes
  *******************************************************************************/
 
-#include "DrvGY_BMP180_Cfg.h"
-#include "DrvGY_BMP180.h"
+#include "Drv_BMP180_Cfg.h"
+#include "Drv_BMP180.h"
 
  /******************************************************************************
   * Module Preprocessor Constants

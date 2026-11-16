@@ -5,6 +5,6 @@
 add_subdirectory(drv_bmp180)
 add_subdirectory(drv_hmc5883l)
 add_subdirectory(drv_mpu60x0)
-add_subdirectory(drv_hwskywalker_esc)
+add_subdirectory(drv_hwskywalker)
 
 

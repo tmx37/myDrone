@@ -9,8 +9,8 @@
  * Includes
  *******************************************************************************/
 
- #include "DrvGY_MPU60X0_Cfg.h"
- #include "DrvGY_MPU60X0.h"
+ #include "Drv_MPU60X0_Cfg.h"
+ #include "Drv_MPU60X0.h"
 
  /******************************************************************************
   * Module Preprocessor Constants

@@ -1,10 +1,11 @@
 #include "main.h"
+#include <string.h>
 
 #include "TestSuite.h"
 
-#include "Drv_HwSkyWalker_Esc.h"
+#include "DrvEsc_HwSkyWalker.h"
 #include "Drv_BMP180.h"
-#include "Drv_HMC5883L.h"
+#include "HMC5883L.h"
 #include "Drv_MPU60X0.h"
 
 const uint8_t* line_0 = " ";
