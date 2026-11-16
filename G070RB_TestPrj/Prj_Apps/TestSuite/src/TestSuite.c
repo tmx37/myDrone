@@ -172,11 +172,12 @@ GenUtl_Err_t TestSuite_AppBussola_Hmc5883l()
     uint8_t CRB_config = 0xA0;  // Configuration register B, defaults to 0x20 (00100000)
     uint8_t MODE_config = 0x00; // Selects measurement mode
 
-    if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_ADDR_READ, 5, HAL_MAX_DELAY) == HAL_OK)
+    if (HAL_I2C_IsDeviceReady(&hi2c1, HMC5883L_DEVICE_ADDR << 1, 5, HAL_MAX_DELAY) == HAL_OK)
     {
-        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
-        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
-        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR, HMC5883L_MODE, 1, &MODE_config, 1, HAL_MAX_DELAY);
+        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR << 1, HMC5883L_CONFIG_A, 1, &CRA_config, 1, HAL_MAX_DELAY);
+        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR << 1, HMC5883L_CONFIG_B, 1, &CRB_config, 1, HAL_MAX_DELAY);
+        HAL_I2C_Mem_Write(&hi2c1, HMC5883L_DEVICE_ADDR << 1, HMC5883L_MODE, 1, &MODE_config, 1, HAL_MAX_DELAY);
+    }
     } 
 
     uint8_t X_out_raw[2], Y_out_raw[2], Z_out_raw[2];
