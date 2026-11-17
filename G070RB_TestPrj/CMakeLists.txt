@@ -27,12 +27,12 @@ include("cmake/gcc-arm-none-eabi.cmake")
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
+# Core project settings
+project(${CMAKE_PROJECT_NAME} C ASM)
+message("Build type: " ${CMAKE_BUILD_TYPE})
+
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
-
-# Core project settings
-project(${CMAKE_PROJECT_NAME})
-message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -48,10 +48,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # All user defined sources
-    ${CMAKE_SOURCE_DIR}/Drivers
-    ${CMAKE_SOURCE_DIR}/Prj_Apps/GenUtl # verify if to put as module 
-    ${CMAKE_SOURCE_DIR}/Prj_Apps/TestSuite
 )
+
+# Modules (drivers, apps, board cfg): with LIB_PARENT_TARGET defined, each module's
+# CMakeLists adds its sources and include dir straight to this executable instead of
+# creating a separate library (cfg files need the HAL headers of the main target).
+set(LIB_PARENT_TARGET ${CMAKE_PROJECT_NAME})
+add_subdirectory(Drivers)
+add_subdirectory(Prj_Apps)
+add_subdirectory(Prj_Cfg)
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
@@ -71,11 +76,4 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-    
-    DRVBMP180
-    DRVHMC5883L
-    DRVMPU60X0
-    DRVHWSKYWALKER
-
-    GENUTL
 )
