@@ -3,9 +3,9 @@
 
 #include "TestSuite.h"
 
-#include "DrvEsc_HwSkyWalker.h"
+#include "Drv_HwSkyWalker.h"
 #include "Drv_BMP180.h"
-#include "HMC5883L.h"
+#include "Drv_HMC5883L.h"
 #include "Drv_MPU60X0.h"
 
 const uint8_t* line_0 = " ";
