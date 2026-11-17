@@ -17,6 +17,7 @@ compile_commands.json
 .ninja_log
 .ninja_deps
 build.ninja
+Makefile
 # Per-machine presets (local toolchain paths, VS Code cache-editor overrides)
 CMakeUserPresets.json
 # clangd index
@@ -60,10 +61,6 @@ CMakeUserPresets.json
 
 # Vagrant directory
 .vagrant/
-
-# Include makefiles
-!Makefile
-*~
 
 # Libraries
 /lib

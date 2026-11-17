@@ -27,6 +27,10 @@ include("cmake/gcc-arm-none-eabi.cmake")
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR "In-source build non permesso: usa 'cmake --preset Debug' (-> build/Debug)")
+endif()
+
 # Core project settings
 project(${CMAKE_PROJECT_NAME} C ASM)
 message("Build type: " ${CMAKE_BUILD_TYPE})
