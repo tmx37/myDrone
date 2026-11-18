@@ -29,7 +29,7 @@
   * Module Variable Definitions
   ******************************************************************************/
 
-static DrvGYBMP180_Config_t mConfigData;
+static Drv_BMP180Cfg_Init mConfigData;
 
  /******************************************************************************
   * Function Definitions Private
@@ -39,13 +39,13 @@ static DrvGYBMP180_Config_t mConfigData;
   * Function Definitions Public
   ******************************************************************************/
 
-UtlGen_Err_t DrvGYBMP180Cfg_Init(void)
+GenUtl_Err_t DrvGYBMP180Cfg_Init(void)
 {
-	UtlGen_Err_t ErrCode;
+	GenUtl_Err_t ErrCode;
 	mConfigData.I2CInst = 0;
-	mConfigData.pfWriteRegistersI2cCB = DrvI2c_WriteRegister;
-	mConfigData.pfReadRegisterI2cCB = DrvI2c_ReadRegister;
-	mConfigData.pfIsDeviceReadyI2cCB = DrvI2c_IsDeviceReady;
+	mConfigData.pfWriteRegistersI2cCB = HAL_I2C_Mem_Write;
+	mConfigData.pfReadRegisterI2cCB = HAL_I2C_Mem_Read;
+	mConfigData.pfIsDeviceReadyI2cCB = HAL_I2C_IsDeviceReady;
 	mConfigData.oversampling_setting = 3;
 
 	ErrCode = DrvGY_BMP180_Init(&mConfigData);

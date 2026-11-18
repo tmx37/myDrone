@@ -16,14 +16,9 @@
 #include "math.h"
 
  /**
- * I2C Functions
- */
-#include "DrvI2c.h"
-
- /**
  * Error codes
  */
-#include "UtlGen.h"
+#include "GenUtl.h"
 
  /******************************************************************************
  * Preprocessor Constants
@@ -53,7 +48,7 @@
 extern "C" {
 #endif
 
-UtlGen_Err_t DrvGYBMP180Cfg_Init(void);
+GenUtl_Err_t Drv_BMP180Cfg_Init(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

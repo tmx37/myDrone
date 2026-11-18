@@ -84,16 +84,16 @@
   * Function Definitions Public
   ******************************************************************************/
 
-  UtlGen_Err_t  DrvMPU60X0Cfg_Init(void)
+  GenUtl_Err_t  Drv_MPU60X0Cfg_Init(void)
   {
     UtlGen_Err_t ErrCode;
     mConfigData.I2CInst = 0;
-    mConfigData.pfWriteRegistersI2cCB = DrvI2c_WriteRegister;
-    mConfigData.pfReadRegisterI2cCB = DrvI2c_ReadRegister;
-    mConfigData.pfIsDeviceReadyI2cCB = DrvI2c_IsDeviceReady;
-    mConfigData.pfMasterTransmitCB = DrvI2c_MasterTransmit;
-    mConfigData.pfMasterReceiveCB = DrvI2c_MasterReceive;
-    mConfigData.pfDelayCB = DrvI2c_Delay;
+    mConfigData.pfWriteRegistersI2cCB = HAL_I2C_Mem_Write;
+    mConfigData.pfReadRegisterI2cCB = HAL_I2C_Mem_Read;
+    mConfigData.pfIsDeviceReadyI2cCB = HAL_I2C_IsDeviceReady;
+    mConfigData.pfMasterTransmitCB = HAL_I2C_Master_Transmit;
+    mConfigData.pfMasterReceiveCB = HAL_I2C_Master_Receive;
+    mConfigData.pfDelayCB = HAL_Delay;
 
     // Refer to MPU_60X0_REGISTER_MAP documentation to compile those settings 
     mSettingsData.RESET_STARTUP = S_PWR_MGMT_1_DEVICE_RESET + S_PWR_MGMT_1_SLEEP;

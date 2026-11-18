@@ -14,11 +14,8 @@
 
 #include "main.h"
 
-// I2C functions
-#include "DrvI2c.h"
-
 // Error codes
-#include "UtlGen.h"
+#include "GenUtl.h"
 
  /******************************************************************************
  * Preprocessor Constants
@@ -50,7 +47,7 @@
 extern "C" {
 #endif
 
-UtlGen_Err_t  DrvMPU60X0Cfg_Init(void);
+GenUtl_Err_t  Drv_MPU60X0Cfg_Init(void);
 
 #ifdef __cplusplus
 } /* extern "C" */
