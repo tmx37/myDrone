@@ -18,6 +18,9 @@ compile_commands.json
 .ninja_deps
 build.ninja
 Makefile
+
+G070RB_TestPrj/Prj_Apps/GenUtl
+
 # Per-machine presets (local toolchain paths, VS Code cache-editor overrides)
 CMakeUserPresets.json
 # clangd index
