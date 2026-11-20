@@ -1,5 +1,30 @@
 # Custom
-G070RB_TestPrj/Drivers
+# G070RB_TestPrj/Drivers/*
+.vscode/*
+
+# CMake build trees and caches.
+# They hold absolute paths/compilers of the machine that configured them:
+# committing them breaks configuring on another machine/OS (e.g. Linux <-> Windows).
+build/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+_deps/
+compile_commands.json
+.ninja_log
+.ninja_deps
+build.ninja
+Makefile
+
+G070RB_TestPrj/Prj_Apps/GenUtl
+
+# Per-machine presets (local toolchain paths, VS Code cache-editor overrides)
+CMakeUserPresets.json
+# clangd index
+.cache/
 
 # Object files
 *.o
@@ -39,10 +64,6 @@ G070RB_TestPrj/Drivers
 
 # Vagrant directory
 .vagrant/
-
-# Include makefiles
-!Makefile
-*~
 
 # Libraries
 /lib
