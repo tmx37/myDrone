@@ -1,17 +1,17 @@
 # Setup repository progetto
-- [ ] Sistemare logica drivers
-- [ ] Sistemare logica configurazioni (callbacks per funzioni hw related) 
-- [ ] Implementare sistema di invio messaggi per app di test
+1 - Aggiornare modulo template (non più solo dedicato ai drv, ma anche agli lm (logic modules))
+2 - Sviluppare le interfacce di interazione standard dei moduli drv e lm (Set, Get, Process, etc..) + Aggiornare il modulo template
+3 - Sviluppare LM_Hw_Comms -> Logic Module Communications (I/O queues, process and interface configurations per tutti i moduli)
+4 - Integrare LM_Hw_Comms in tutti i moduli, applicativi e main.c
+5 - Implementare logica multi istanza per il controllo pwm di drv_hwskywalker 
 
 # Analisi/studio
-- Standard struttura fw
 - Studio sistemi RTOS
-- Recupero teoria PID innestato integrale 
+- Recuperare teoria PID innestato integrale studiata
 - Studio stack mavlink
 
-# Sviluppo
-- Revisione moduli sensori
-- Scrittura modulo controllo ESP
-- layer di comunicazione univoco
-- Modulo applicativo "FlightControl"
-- Modulo sensore GPS
+# Sviluppo futuro
+DOING - layer di comunicazione univoco -> LM_Hw_Comms
+TODO - Modulo applicativo "FlightControl"
+TODO - Modulo sensore GPS
+TODO - LM_MavLink_Comms

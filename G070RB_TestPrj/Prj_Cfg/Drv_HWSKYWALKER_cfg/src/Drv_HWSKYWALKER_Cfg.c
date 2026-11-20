@@ -28,7 +28,7 @@ GenUtl_Err_t Drv_HWSKYWALKER_Cfg_Init()
  */
 GenUtl_Err_t UART_Trasmit_Wrapper(const uint8_t *pData, uint16_t Size, uint32_t Timeout)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)pData; 
     (void)Size; 
     (void)Timeout;

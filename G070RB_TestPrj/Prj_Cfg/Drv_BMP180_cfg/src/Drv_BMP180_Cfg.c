@@ -58,7 +58,7 @@ GenUtl_Err_t DrvGYBMP180Cfg_Init(void)
 
 GenUtl_Err_t I2C_Mem_Write_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDataBuffer, uint32_t DataSize)
 {
-	/** TODO: add here call to LM_Comms */
+	/** TODO: add here call to LM_Hw_Comms */
 	(void)DevAddr;
 	(void)RegNdx;
 	(void)pDataBuffer;
@@ -68,7 +68,7 @@ GenUtl_Err_t I2C_Mem_Write_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDa
 
 GenUtl_Err_t I2C_Mem_Read_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDataBuffer, uint32_t DataSize)
 {
-	/** TODO: add here call to LM_Comms */
+	/** TODO: add here call to LM_Hw_Comms */
 	(void)DevAddr;
 	(void)RegNdx;
 	(void)pDataBuffer;
@@ -78,7 +78,7 @@ GenUtl_Err_t I2C_Mem_Read_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDat
 
 GenUtl_Err_t I2C_IsDeviceReady_Wrapper(uint8_t DevAddr, uint8_t nTrials)
 {
-	/** TODO: add here call to LM_Comms */
+	/** TODO: add here call to LM_Hw_Comms */
 	(void)DevAddr;
 	(void)nTrials;
 	return OUT_OK;

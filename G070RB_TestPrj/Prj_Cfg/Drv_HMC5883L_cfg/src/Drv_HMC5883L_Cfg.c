@@ -34,7 +34,7 @@ GenUtl_Err_t Drv_HMC5883LCfg_Init()
 
 GenUtl_Err_t I2C_Mem_Write_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDataBuffer, uint32_t DataSize)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)DevAddr;
     (void)RegNdx;
     (void)pDataBuffer;
@@ -44,7 +44,7 @@ GenUtl_Err_t I2C_Mem_Write_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDa
 
 GenUtl_Err_t I2C_Mem_Read_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDataBuffer, uint32_t DataSize)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)DevAddr;
     (void)RegNdx;
     (void)pDataBuffer;
@@ -54,7 +54,7 @@ GenUtl_Err_t I2C_Mem_Read_Wrapper(uint8_t DevAddr, uint8_t RegNdx, uint8_t *pDat
 
 GenUtl_Err_t I2C_IsDeviceReady_Wrapper(uint8_t DevAddr, uint8_t nTrials)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)DevAddr;
     (void)nTrials;
     return OUT_OK;
@@ -62,7 +62,7 @@ GenUtl_Err_t I2C_IsDeviceReady_Wrapper(uint8_t DevAddr, uint8_t nTrials)
 
 GenUtl_Err_t I2C_MasterTransmit_Wrapper(uint16_t DevAddress, uint8_t *pData, uint16_t Size)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)DevAddress;
     (void)pData; 
     (void)Size;
@@ -71,7 +71,7 @@ GenUtl_Err_t I2C_MasterTransmit_Wrapper(uint16_t DevAddress, uint8_t *pData, uin
 
 GenUtl_Err_t I2C_MasterReceive_Wrapper(uint16_t DevAddress, uint8_t *pData, uint16_t Size)
 {
-    /** TODO: forward to LM_Comms */
+    /** TODO: forward to LM_Hw_Comms */
     (void)DevAddress;
     (void)pData; 
     (void)Size;
