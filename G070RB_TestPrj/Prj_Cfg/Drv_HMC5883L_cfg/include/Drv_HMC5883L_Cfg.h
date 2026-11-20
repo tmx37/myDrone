@@ -1,12 +1,12 @@
 /*
- * DrvGY_HMC5883L_Cfg.h
+ * Drv_HMC5883L_Cfg.h
  *
- *  Created on: Mar 19, 2025
+ *  Created on: 20/11/2026
  *      Author: tmx37
  */
 
-#ifndef DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_
-#define DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_
+#ifndef DRV_HMC5883L_CFG_DRV_HMC5883L_CFG_H_
+#define DRV_HMC5883L_CFG_DRV_HMC5883L_CFG_H_
 
 #include "GenUtl.h"
 #include <stdint.h>
@@ -21,4 +21,4 @@
 
 GenUtl_Err_t Drv_HMC5883LCfg_Init();
 
-#endif /* DRVGY_HMC5883L_CFG_DRVGY_HMC5883L_CFG_H_ */
+#endif /* DRV_HMC5883L_CFG_DRV_HMC5883L_CFG_H_ */
